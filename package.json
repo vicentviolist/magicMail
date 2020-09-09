@@ -3,8 +3,6 @@
   "version": "0.0.1",
   "description": "Proyecto base usando la arquitectura Clean Code",
   "productName": "Clean Template",
-  "cordovaId": "mx.exos.template-clean",
-  "capacitorId": "",
   "author": "lennux23 <alexochihua@hotmail.com>",
   "private": true,
   "scripts": {
@@ -13,13 +11,13 @@
   },
   "dependencies": {
     "@forgerock/javascript-sdk": "^1.0.5",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.9.5",
     "axios": "^0.18.1",
-    "quasar": "^1.0.0",
+    "quasar": "^1.13.2",
     "vue-i18n": "^8.0.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0",
+    "@quasar/app": "^2.0.9",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
@@ -32,9 +30,14 @@
     "yarn": ">= 1.21.1"
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
-  ],
-  "resolutions": {
-    "@babel/parser": "7.7.5"
-  }
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ]
 }
