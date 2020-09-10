@@ -7,7 +7,8 @@ const routes = [
       {
         path: '',
         name: 'login',
-        component: () => import(/* webpackChunkName: "login" */ 'pages/Index.vue'),
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/MainPage.vue'),
       },
       {
         path: 'forgotPassword',

@@ -32,7 +32,17 @@ export default {
     },
   },
   errors: {
+    server: {
+      forbidden: 'Acceso denegado',
+      unauthorizedUser: 'Usuario no autorizado',
+      notFound: 'URL de petición no encontrada',
+      internalError: 'Error interno en el servidor',
+      system: 'Error interno del sistema',
+    },
     fieldRequired: ' es requerido.',
     pageNotFound: '¡Oops!, no hay nada por aquí...',
+    email: 'Correo electrónico inválido',
+    invalidRequest: 'Solicitud inválida',
+    badRequest: 'Error en los datos de la solicitud',
   },
 };

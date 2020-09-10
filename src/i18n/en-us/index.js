@@ -32,7 +32,17 @@ export default {
     },
   },
   errors: {
+    server: {
+      forbidden: 'Denied access',
+      unauthorizedUser: 'Unauthorized user',
+      notFound: 'Request URL not founded',
+      internalError: 'Internal error',
+      system: 'Internal server error',
+    },
     fieldRequired: ' is required',
     pageNotFound: '¡Oops!, nothing here...',
+    email: 'Invalid email',
+    invalidRequest: 'Invalid request',
+    badRequest: 'Bad request',
   },
 };

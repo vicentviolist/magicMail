@@ -12,7 +12,7 @@ module.exports = function(/* ctx */) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
-    boot: ['i18n', 'axios', 'amplify'],
+    boot: ['i18n', 'axios', 'amplify', 'plugins'],
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ['app.scss'],
@@ -45,21 +45,10 @@ module.exports = function(/* ctx */) {
       //            (not treeshaking Quasar; biggest bundle size; convenient)
       importStrategy: 'auto',
 
-      /* components: [
-        'QLayout',
-        'QHeader',
-        'QPageContainer',
-        'QPage',
-        'QForm',
-        'QBtn',
-        'QCard',
-        'QInput',
-      ],
-
       directives: ['Ripple'],
 
       // Quasar plugins
-      plugins: [], */
+      plugins: ['Notify'],
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ts
