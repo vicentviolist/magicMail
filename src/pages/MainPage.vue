@@ -6,7 +6,7 @@
         <q-input
           dense
           class="q-mb-md"
-          v-model="form.user"
+          v-model="form.username"
           :label="$tc('user.label', 1)"
           lazy-rules
           :rules="[
@@ -56,7 +56,7 @@ export default {
     return {
       loading: false,
       form: {
-        user: null,
+        username: null,
         password: null,
       },
     };
