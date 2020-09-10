@@ -21,7 +21,7 @@ export default {
     cancel: 'Cancelar',
     accept: 'Aceptar',
     here: 'aquí',
-    goback: 'Regresar a',
+    goback: 'Regresar',
     restore: 'Recuperar',
     settings: 'Opciones',
     signOut: 'Cerrar sesión',

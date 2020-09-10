@@ -21,7 +21,7 @@ export default {
     cancel: 'Cancel',
     accept: 'Accept',
     here: 'here',
-    goback: 'Return to ',
+    goback: 'Go back',
     restore: 'Restore',
     settings: 'Settings',
     signOut: 'Sign out',
