@@ -30,6 +30,9 @@ const routes = [
           import(
             /* webpackChunkName: "dashboard" */ 'pages/Dashboard/MainBoard.vue'
           ),
+        meta: {
+          requiresAuth: false,
+        },
       },
     ],
   },
