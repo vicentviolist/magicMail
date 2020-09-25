@@ -1,5 +1,16 @@
 <template>
   <q-page class="flex flex-center bg-grey-1">
+    <exportFile
+      ref="exportPackages"
+      class="fit"
+      directExport
+      :data="intercambios"
+      :columns="columns"
+      fileName="nombre_reporte"
+      fileSheetName="MiReporte"
+      :labelButton="$t('gral.export')"
+      @click="handleExport"
+    ></exportFile>
     <e-table
       :data="intercambios"
       :columns="columns"
@@ -11,7 +22,12 @@
 </template>
 
 <script>
+import ExportFile from 'src/components/local/ExportFile.vue';
 export default {
+  name: 'main-board',
+  components: {
+    ExportFile,
+  },
   data() {
     return {
       intercambios: [
@@ -70,6 +86,11 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    async handleExport() {
+      // llamado al action/ api
+    },
   },
 };
 </script>

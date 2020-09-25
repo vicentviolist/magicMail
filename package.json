@@ -17,6 +17,7 @@
     "axios": "^0.18.1",
     "quasar": "^1.13.2",
     "ramda": "^0.27.1",
+    "tableexport": "^5.2.0",
     "vue-i18n": "^8.0.0"
   },
   "devDependencies": {
