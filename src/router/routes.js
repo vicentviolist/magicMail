@@ -25,11 +25,28 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'dashboard',
         component: () =>
           import(
             /* webpackChunkName: "dashboard" */ 'pages/Dashboard/MainBoard.vue'
           ),
+        children: [
+          {
+            path: 'list',
+            name: 'dashboard',
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboard" */ 'pages/Dashboard/List/ListData.vue'
+              ),
+          },
+          {
+            path: 'bulk-load',
+            name: 'bulkLoad',
+            component: () =>
+              import(
+                /* webpackChunkName: "bulk" */ 'pages/Dashboard/Bulk/BulkLoad.vue'
+              ),
+          },
+        ],
         meta: {
           requiresAuth: false,
         },
