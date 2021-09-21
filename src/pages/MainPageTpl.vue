@@ -15,7 +15,8 @@
           <slot name="form"> </slot>
         </div>
         <div style="width:60%;" class="q-mx-auto">
-          <slot class="text-center q-pb-md q-pb-xl-xl text-weight-thin" name="pass"> </slot>
+          <slot class="text-center q-pb-md q-pb-xl-xl text-weight-thin" name="pass">
+          </slot>
         </div>
       </div>
     </q-card>
@@ -31,13 +32,13 @@
   height: 69vh;
   border-radius: 30px;
 }
-.space-pan-text{
+.space-pan-text {
   word-spacing: 4px;
 }
-.m-mt-less{
+.m-mt-less {
   margin-top: -100px;
 }
-.m-bg-red{
+.m-bg-red {
   opacity: 50%;
 }
 </style>

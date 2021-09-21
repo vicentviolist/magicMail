@@ -1,9 +1,10 @@
 <template>
   <MainTempl>
     <template v-slot:back>
-      <div class="flex justify-start full-width" @click="back()">
+      <div class="flex justify-start  absolute-top full-width">
         <q-btn
           flat
+          @click="back()"
           no-caps
           label="Regresar"
           icon="arrow_back_ios"
@@ -13,33 +14,30 @@
     </template>
     <template v-slot:title>
       <div class="row flex flex-center">
-        <m-card isMini description="" iconFondo="img/min-fam.svg" />
-        <div class="text-h4 m-y-auto">Usuarios Clientes</div>
+        <m-card
+          isMini
+          description=""
+          iconFondo="img/mini-inventarios.svg"
+          color="bg-inventario"
+        />
+        <div class="text-h4 m-y-auto">Inventarios</div>
       </div>
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente quas
-        quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
-        autem.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
       </div>
-      <q-btn rounded label="Nuevo Usuario" icon="add" color="info"> </q-btn>
+      <q-btn
+        rounded
+        label="Nuevo Juguete"
+        class="q-mb-lg"
+        icon="add"
+        no-caps
+        color="info"
+      >
+      </q-btn>
     </template>
     <template v-slot:table>
-      <div class="full-width flex flex-center q-my-lg">
-        <q-input
-          rounded
-          outlined
-          style="width:55%"
-          debounce="300"
-          v-model="filter"
-          placeholder="Buscar Cliente"
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </div>
       <div class="full-width flex flex-center">
         <q-table
           style="height: 300px; width:55%;"
@@ -50,6 +48,9 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
+          <template v-slot:header-selection="scope">
+            <q-toggle v-model="scope.name" />
+          </template>
         </q-table>
       </div>
     </template>
@@ -67,12 +68,14 @@ export default {
   data() {
     return {
       loading: false,
-      filter: '',
+      separator: 'none',
       columns: [
         {
           name: 'name',
           required: true,
           label: 'Nombre',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
           align: 'left',
           field: row => row.name,
           sortable: true,
@@ -80,54 +83,82 @@ export default {
         {
           name: 'identificedor',
           align: 'center',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
           label: 'Identificador',
           field: 'identificedor',
           sortable: true,
         },
-        { name: 'registro', label: 'Registro', field: 'registro', sortable: true },
-        { name: 'email', label: 'Correo Electronico', field: 'email' },
-        { name: 'password', label: 'Password', field: 'password' },
-        { name: 'ultimoPedido', label: 'Último Pedido', field: 'ultimoPedido' },
+        {
+          name: 'producto',
+          label: 'producto',
+          field: 'producto',
+          sortable: true,
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+        },
+        {
+          name: 'precio',
+          label: 'Precio',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8; color:red;',
+          format: val => `$${val}`,
+          field: 'precio',
+        },
+        {
+          name: 'marca',
+          label: 'Marca',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'marca',
+        },
+        {
+          name: 'disponibilidad',
+          label: 'Disponibilidad',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'disponibilidad',
+        },
       ],
       data: [
         {
           name: 'Vicente Olivares',
           identificedor: 'IAJ0980LO',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092089',
+          producto: 'pelota Roja',
+          precio: '198.00',
+          marca: 'Matel',
+          disponibilidad: 'si',
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          identificedor: 'IBJ0980MV',
+          producto: 'pelota Roja',
+          precio: '198.00',
+          marca: 'Matel',
+          disponibilidad: 'si',
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          identificedor: 'IBJ0980FL',
+          producto: 'pelota Roja',
+          precio: '198.00',
+          marca: 'Matel',
+          disponibilidad: 'no',
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          identificedor: 'IBJ0980PV',
+          producto: 'pelota Roja',
+          precio: '198.00',
+          marca: 'Matel',
+          disponibilidad: 'si',
         },
       ],
     };
   },
   methods: {
     back() {
-      this.$router.push({ name: 'admi' }).catch(e => console.log(e));
+      this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
     onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination;

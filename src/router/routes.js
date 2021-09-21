@@ -11,7 +11,7 @@ const routes = [
           import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),
       },
       {
-        path: '',
+        path: 'admin',
         name: 'loginAdmin',
         component: () =>
           import(/* webpackChunkName: "login" */ 'pages/AdminLogin.vue'),
@@ -25,7 +25,7 @@ const routes = [
     ],
   },
   {
-    path: '/dashboard',
+    path: '/administrador',
     component: () =>
       import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayout.vue'),
     children: [
@@ -74,6 +74,65 @@ const routes = [
             component: () =>
               import(
                 /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/UsuariosJuguetes.vue'
+              ),
+          },
+          {
+            path: 'reporte-pedidos',
+            name: 'reportePedidos',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/ReportePedidos.vue'
+              ),
+          },
+        ],
+        meta: {
+          requiresAuth: false,
+        },
+      },
+    ],
+  },
+  {
+    path: '/vendedor',
+    component: () =>
+      import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayoutVendedor.vue'),
+    children: [
+      {
+        path: '',
+        component: () =>
+          import(
+            /* webpackChunkName: "dashboard" */ 'pages/Dashboard/MainBoard.vue'
+          ),
+        children: [
+          {
+            path: 'home-vendedor',
+            name: 'vendedor',
+            component: () =>
+              import(
+                /* webpackChunkName: "bulk" */ 'pages/Dashboard/Vendedores/HomeVendedor.vue'
+              ),
+          },
+          {
+            path: 'inventario',
+            name: 'inventario',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Vendedores/Inventario.vue'
+              ),
+          },
+          {
+            path: 'pedidos',
+            name: 'pedidos',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Vendedores/Pedidos.vue'
+              ),
+          },
+          {
+            path: 'user',
+            name: 'user',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Vendedores/Perfil.vue'
               ),
           },
         ],

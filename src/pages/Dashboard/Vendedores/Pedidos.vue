@@ -29,7 +29,8 @@
         quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
         autem.
       </div>
-      <q-btn rounded label="Nueva Jugueteria" icon="add" color="info"> </q-btn>
+      <q-btn rounded label="Nueva Jugueteria" icon="add" no-caps color="info">
+      </q-btn>
     </template>
     <template v-slot:table>
       <div class="full-width flex flex-center q-my-lg">
@@ -162,7 +163,7 @@ export default {
   },
   methods: {
     back() {
-      this.$router.push({ name: 'admi' }).catch(e => console.log(e));
+      this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
     onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination;

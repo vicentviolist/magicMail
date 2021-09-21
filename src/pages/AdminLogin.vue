@@ -27,7 +27,7 @@
           v-model="form.password"
           type="password"
           :label="$t('user.password')"
-          >
+        >
           <template v-slot:prepend>
             <q-icon name="check_circle_outline" />
           </template>
@@ -35,22 +35,21 @@
         <q-btn
           :loading="loading"
           rounded
-          type="submit"
+          @click="admiV"
           class="q-mb-md full-width"
           color="primary"
           no-caps
           :label="$t('gral.pages.logIn')"
         >
-          
           <template v-slot:loading>
             <q-spinner-facebook />
           </template>
         </q-btn>
       </q-form>
     </template>
-    <template v-slot:pass >
+    <template v-slot:pass>
       <div class="q-mx-auto text-center text-weight-light text-caption">
-           <a href="">¿Olvido su contraseña?</a> 
+        <a href="">¿Olvido su contraseña?</a>
       </div>
     </template>
   </main-page-tpl>
@@ -62,7 +61,7 @@ import MainPageTpl from './MainPageTpl';
 export default {
   name: 'main-page',
   components: {
-    MainPageTpl
+    MainPageTpl,
   },
   data() {
     return {
@@ -110,6 +109,9 @@ export default {
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
+    },
+    admiV() {
+      this.$router.push({ name: 'admi' });
     },
   },
 };

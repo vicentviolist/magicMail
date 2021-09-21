@@ -10,7 +10,7 @@
           borderless
           color=""
           hide-dropdown-icon
-          label="Usuario Name"
+          label="Usuario Vendedor"
           label-color=""
           :value="value"
           @input="val => $emit('input', val)"

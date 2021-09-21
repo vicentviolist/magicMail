@@ -1,9 +1,10 @@
 <template>
   <MainTempl>
     <template v-slot:back>
-      <div class="flex justify-start full-width" @click="back()">
+      <div class="flex justify-start  absolute-top full-width">
         <q-btn
           flat
+          @click="back()"
           no-caps
           label="Regresar"
           icon="arrow_back_ios"
