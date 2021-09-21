@@ -7,19 +7,19 @@
       :src="
         data && contentType
           ? `data:${contentType};base64,${data}`
-          : 'img/default-avatar.png'
+          : 'img/Page-1.svg'
       "
       style="height: 10vh;"
       alt="avatar"
     />
-    <q-avatar v-else :size="size" :class="'shadow-3'">
+    <q-avatar v-else :size="size" :class="'shadow-3 q-ma-sm'">
       <img
         :class="editable ? 'cursor-pointer' : ''"
         @click="editable ? $refs.fileAvatar.pickFiles() : $emit('click')"
         :src="
           data && contentType
             ? `data:${contentType};base64,${data}`
-            : 'img/default-avatar.png'
+            : 'img/Page-1.svg'
         "
       />
 

@@ -1,18 +1,41 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class=" bg-main text-white q-px-lg q-py-sm">
+    <div elevated class=" bg-white q-px-lg q-py-sm">
       <div class="row items-center">
-        <div>
-          <q-img contain :src="'/logo.png'" style="height: 60px; width:60px;" />
+        <div class="text-primary text-h2">
+          MAGIC MAIL
         </div>
         <q-space />
-        <div class="text-body2 text-primary q-mr-sm">Usuario Test</div>
-        <e-avatar size="60px" />
+        <q-select
+          borderless
+          color=""
+          hide-dropdown-icon
+          label="Usuario Name"
+          label-color=""
+          :value="value"
+          @input="val => $emit('input', val)"
+          style="min-width:150px;"
+        >
+          <template v-slot:append>
+            <q-icon
+              v-if="!!value"
+              name="clear"
+              size="xs"
+              @click.stop="$emit('input', null)"
+              class="cursor-pointer"
+            />
+            <q-icon name="keyboard_arrow_down" />
+          </template>
+        </q-select>
+        <e-avatar size="40px" class="q-mr-md" />
       </div>
-    </q-header>
-
+    </div>
     <q-page-container>
       <router-view />
+      <q-footer class="text-center text-black bg-white text-weight-light q-py-xl"
+        >Política de privacidad | Términos y condiciones | Copyright © 2021 Magic
+        Mail Todos los derechos reservados.</q-footer
+      >
     </q-page-container>
   </q-layout>
 </template>

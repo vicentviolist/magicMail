@@ -8,7 +8,13 @@ const routes = [
         path: '',
         name: 'login',
         component: () =>
-          import(/* webpackChunkName: "login" */ 'pages/MainPage.vue'),
+          import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),
+      },
+      {
+        path: '',
+        name: 'loginAdmin',
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/AdminLogin.vue'),
       },
       {
         path: 'forgotPassword',
@@ -44,6 +50,30 @@ const routes = [
             component: () =>
               import(
                 /* webpackChunkName: "bulk" */ 'pages/Dashboard/Bulk/BulkLoad.vue'
+              ),
+          },
+          {
+            path: 'home-admi',
+            name: 'admi',
+            component: () =>
+              import(
+                /* webpackChunkName: "bulk" */ 'pages/Dashboard/Admi/HomeAdministrador.vue'
+              ),
+          },
+          {
+            path: 'usuarios-clientes',
+            name: 'usuariosClintes',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/UsuariosClientes.vue'
+              ),
+          },
+          {
+            path: 'usuarios-juguetes',
+            name: 'usuariosJuguetes',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/UsuariosJuguetes.vue'
               ),
           },
         ],
