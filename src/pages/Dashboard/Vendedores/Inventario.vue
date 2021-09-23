@@ -48,8 +48,12 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
-          <template v-slot:header-selection="scope">
-            <q-toggle v-model="scope.name" />
+          <template v-slot:body-cell-img>
+            <q-td style="background: #F8F8F8;">
+              <div class="cursor-pointer flex flex-center">
+                <img src="img/images.svg" alt="" />
+              </div>
+            </q-td>
           </template>
         </q-table>
       </div>
@@ -71,12 +75,12 @@ export default {
       separator: 'none',
       columns: [
         {
-          name: 'name',
+          name: 'img',
           required: true,
-          label: 'Nombre',
+          label: 'Fotografia',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          align: 'left',
+          align: 'center',
           field: row => row.name,
           sortable: true,
         },
@@ -118,6 +122,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'disponibilidad',
+          align: 'center',
         },
       ],
       data: [

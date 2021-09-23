@@ -16,38 +16,56 @@
       <div class="row flex flex-center">
         <m-card
           isMini
+          color="bg-accent"
+          iconFondo="img/mini-report.svg"
           description=""
-          color="bg-secondary"
-          iconFondo="img/mini-blocks.svg"
         />
-        <div class="text-h4 m-y-auto">Usuarios Juguetes</div>
+        <div class="text-h4 m-y-auto">Reporte de Pedidos</div>
       </div>
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente quas
-        quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
-        autem.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
       </div>
-      <q-btn rounded label="Nueva Jugueteria" icon="add" no-caps color="info">
-      </q-btn>
     </template>
     <template v-slot:table>
-      <div class="full-width flex flex-center q-my-lg">
-        <q-input
-          rounded
-          outlined
-          style="width:55%"
-          debounce="300"
-          v-model="filter"
-          placeholder="Buscar Cliente"
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
+      <div class="flex flex- justify-end q-my-lg" style="width:55%">
+        <div class="flex justify-end">
+          <q-btn
+            :loading="loading"
+            rounded
+            @click="exportTable"
+            type="submit"
+            class="q-mr-lg"
+            color="primary"
+            no-caps
+            label="Descargar"
+          />
+          <q-btn
+            v-if="isGraph == false"
+            :loading="loading"
+            rounded
+            type="submit"
+            icon="signal_cellular_alt"
+            @click="graphSection"
+            class=""
+            no-caps
+            label="Grafica"
+          />
+          <q-btn
+            v-if="isGraph == true"
+            :loading="loading"
+            rounded
+            type="submit"
+            icon="format_list_numbered_rtl"
+            @click="tableSection"
+            class=""
+            no-caps
+            label="Lista"
+          />
+        </div>
       </div>
-      <div class="full-width flex flex-center">
+      <div class="full-width flex flex-center" v-if="isGraph == false">
         <q-table
           style="height: 300px; width:55%;"
           :data="data"
@@ -59,12 +77,24 @@
         >
         </q-table>
       </div>
+      <div v-if="isGraph == true"><AreaChart /></div>
     </template>
   </MainTempl>
 </template>
 
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
+import { exportFile } from 'quasar';
+import Chart from 'chart.js';
+
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
+
+  formatted = formatted === void 0 || formatted === null ? '' : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  return `"${formatted}"`;
+}
 
 export default {
   name: 'main-page',
@@ -74,6 +104,12 @@ export default {
   data() {
     return {
       loading: false,
+      chartData: {
+        Books: 24,
+        Magazine: 30,
+        Newspapers: 10,
+      },
+      isGraph: false,
       filter: '',
       columns: [
         {
@@ -165,45 +201,40 @@ export default {
     back() {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
-    onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
+    graphSection() {
+      this.isGraph = true;
+    },
+    tableSection() {
+      this.isGraph = false;
+    },
+    exportTable() {
+      // naive encoding to csv format
+      const content = [this.columns.map(col => wrapCsvValue(col.label))]
+        .concat(
+          this.data.map(row =>
+            this.columns
+              .map(col =>
+                wrapCsvValue(
+                  typeof col.field === 'function'
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format,
+                ),
+              )
+              .join(','),
+          ),
+        )
+        .join('\r\n');
 
-      this.loading = true;
+      const status = exportFile('Reporte-de-Peidos.csv', content, 'text/csv');
 
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter);
-
-        // get all rows if "All" (0) is selected
-        const fetchCount =
-          rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage;
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(
-          startRow,
-          fetchCount,
-          filter,
-          sortBy,
-          descending,
-        );
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData);
-
-        // don't forget to update local pagination object
-        this.pagination.page = page;
-        this.pagination.rowsPerPage = rowsPerPage;
-        this.pagination.sortBy = sortBy;
-        this.pagination.descending = descending;
-
-        // ...and turn of loading indicator
-        this.loading = false;
-      }, 1500);
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning',
+        });
+      }
     },
 
     // emulate ajax call
