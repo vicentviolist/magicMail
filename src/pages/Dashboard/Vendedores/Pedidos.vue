@@ -27,6 +27,62 @@
       <div class="q-mb-lg" style="width:35%">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
       </div>
+      <div class="q-mb-lg flex flex-center row">
+        <div class="q-mr-lg">
+          <q-select
+            outlined
+            rounded
+            v-model="filterData.identificador"
+            use-input
+            input-debounce="0"
+            label="Identificador filter"
+            :options="options"
+            @filter="filterFn"
+            style="width: 250px"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+        <div>
+          <q-select
+            outlined
+            rounded
+            v-model="filterData.status"
+            use-input
+            input-debounce="0"
+            label="Status filter"
+            :options="options"
+            @filter="filterFn"
+            style="width: 250px"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+        <q-btn
+          :loading="loading"
+          round
+          size="20px"
+          type="submit"
+          class="q-ml-lg"
+          color="primary"
+          icon="search"
+          no-caps
+        />
+      </div>
     </template>
     <template v-slot:table>
       <div class="flex flex- justify-end q-my-lg" style="width:55%">
@@ -104,95 +160,90 @@ export default {
   data() {
     return {
       loading: false,
-      chartData: {
-        Books: 24,
-        Magazine: 30,
-        Newspapers: 10,
+      filterData: {
+        identificador: null,
+        status: null,
       },
       isGraph: false,
-      filter: '',
       columns: [
         {
-          name: 'name',
+          name: 'identificador',
           required: true,
-          label: 'Jugueteria',
+          label: 'Identificador',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           align: 'left',
-          field: row => row.name,
-          sortable: true,
+          field: 'identificador',
         },
         {
-          name: 'identificedor',
+          name: 'jugueteria',
           align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          label: 'Identificador',
-          field: 'identificedor',
-          sortable: true,
+          label: 'Jugueteria',
+          field: 'jugueteria',
         },
         {
           name: 'registro',
           label: 'Registro',
           field: 'registro',
-          sortable: true,
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
         },
         {
-          name: 'email',
-          label: 'Correo Electronico',
+          name: 'user',
+          label: 'Usuario',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          field: 'email',
+          field: 'user',
         },
         {
-          name: 'password',
-          label: 'Password',
+          name: 'costo',
+          label: 'Costo',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          field: 'password',
+          field: 'costo',
         },
         {
-          name: 'ultimoPedido',
-          label: 'Último Pedido',
+          name: 'status',
+          label: 'Status',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          field: 'ultimoPedido',
+          field: 'status',
         },
       ],
       data: [
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IAJ0980LO',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IAJ0980LO',
           registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092089',
+          user: 'user.test@test.mx',
+          costo: 1879,
+          status: 'Recibido',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ0980FV',
           registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          user: 'user.test@test.mx',
+          costo: 1879,
+          status: 'En camino',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ0980FV',
           registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          user: 'user.test@test.mx',
+          costo: 1879,
+          status: 'En Camino',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ0980FV',
           registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
+          user: 'user.test@test.mx',
+          costo: 1879,
+          status: 'Recibido',
         },
       ],
     };
@@ -208,7 +259,6 @@ export default {
       this.isGraph = false;
     },
     exportTable() {
-      // naive encoding to csv format
       const content = [this.columns.map(col => wrapCsvValue(col.label))]
         .concat(
           this.data.map(row =>
@@ -225,9 +275,7 @@ export default {
           ),
         )
         .join('\r\n');
-
       const status = exportFile('Reporte-de-Peidos.csv', content, 'text/csv');
-
       if (status !== true) {
         this.$q.notify({
           message: 'Browser denied file download...',
@@ -235,43 +283,6 @@ export default {
           icon: 'warning',
         });
       }
-    },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice();
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn =
-          sortBy === 'desc'
-            ? descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-            : descending
-            ? (a, b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy])
-            : (a, b) => parseFloat(a[sortBy]) - parseFloat(b[sortBy]);
-        data.sort(sortFn);
-      }
-
-      return data.slice(startRow, startRow + count);
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
-      if (!filter) {
-        return this.original.length;
-      }
-      let count = 0;
-      this.original.forEach(treat => {
-        if (treat.name.includes(filter)) {
-          ++count;
-        }
-      });
-      return count;
     },
   },
 };

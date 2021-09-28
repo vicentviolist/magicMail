@@ -31,6 +31,7 @@
         rounded
         label="Nuevo Juguete"
         class="q-mb-lg"
+        @click="alert = true"
         icon="add"
         no-caps
         color="info"
@@ -50,13 +51,94 @@
         >
           <template v-slot:body-cell-img>
             <q-td style="background: #F8F8F8;">
-              <div class="cursor-pointer flex flex-center">
+              <div
+                class="cursor-pointer flex flex-center "
+                @click="jugueteMod = true"
+              >
                 <img src="img/images.svg" alt="" />
               </div>
             </q-td>
           </template>
         </q-table>
       </div>
+      <q-dialog v-model="alert">
+        <q-card>
+          <q-card-section
+            ><div class="flex flex-center justify-between m-modal">
+              <img src="img/dino.svg" class="q-ml-xl q-pl-md" alt="" />
+              <div class="text-h6 q-mr-xl q-pr-xl">Perfil del Producto</div>
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-lg flex flex-center ">
+            <div class="" style="width:70%">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="identificedor"
+                label="IDENTIFICADOR"
+              >
+              </m-input>
+
+              <m-input filled class="q-mb-lg" v-model="name" label="Producto">
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="email" label="PRECIO">
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="password" label="MARCA">
+              </m-input>
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-mb-xl">
+            <q-btn
+              rounded
+              label="Guardar"
+              class="q-mr-xl"
+              color="primary"
+              @click="addUser"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      <q-dialog v-model="jugueteMod">
+        <q-card>
+          <q-card-section
+            ><div class="flex flex-center justify-between m-modal">
+              <img src="img/dino.svg" class="q-ml-xl q-pl-md" alt="" />
+              <div class="text-h6 q-mr-xl q-pr-xl">Perfil del Producto</div>
+            </div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-lg flex flex-center ">
+            <div class="" style="width:70%">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="identificedor"
+                label="IDENTIFICADOR"
+              >
+              </m-input>
+
+              <m-input filled class="q-mb-lg" v-model="name" label="Producto">
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="email" label="PRECIO">
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="password" label="MARCA">
+              </m-input>
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-mb-xl">
+            <q-btn
+              rounded
+              label="Guardar"
+              class="q-mr-xl"
+              color="primary"
+              @click="addUser"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </template>
   </MainTempl>
 </template>
@@ -72,6 +154,8 @@ export default {
   data() {
     return {
       loading: false,
+      alert: false,
+      jugueteMod: false,
       separator: 'none',
       columns: [
         {

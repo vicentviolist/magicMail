@@ -244,10 +244,9 @@ export default {
 .e-input {
   .q-field {
     &__label {
-      margin-left: -40px;
+      margin-left: -14px;
       margin-top: -22px;
     }
   }
 }
-
 </style>

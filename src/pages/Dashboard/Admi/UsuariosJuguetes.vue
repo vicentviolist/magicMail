@@ -29,7 +29,14 @@
         quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
         autem.
       </div>
-      <q-btn rounded label="Nueva Jugueteria" icon="add" color="info"> </q-btn>
+      <q-btn
+        rounded
+        label="Nueva Jugueteria"
+        icon="add"
+        color="info"
+        @click="alert = true"
+      >
+      </q-btn>
     </template>
     <template v-slot:table>
       <div class="full-width flex flex-center q-my-lg">
@@ -58,6 +65,46 @@
         >
         </q-table>
       </div>
+      <q-dialog v-model="alert">
+        <q-card>
+          <q-card-section>
+            <div class="text-h6">Perfil del Usuario</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-lg flex flex-center m-modal">
+            <div class="" style="width:70%">
+              <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
+              </m-input>
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="identificedor"
+                label="IDENTIFICADOR"
+              >
+              </m-input>
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="email"
+                label="CORREO ELECTRONICO"
+              >
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
+              </m-input>
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="q-mb-xl">
+            <q-btn
+              rounded
+              label="Guardar"
+              class="q-mr-xl"
+              color="primary"
+              @click="addUser"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </template>
   </MainTempl>
 </template>
@@ -73,6 +120,7 @@ export default {
   data() {
     return {
       loading: false,
+      alert: null,
       filter: '',
       columns: [
         {

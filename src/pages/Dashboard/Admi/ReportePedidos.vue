@@ -26,6 +26,62 @@
       <div class="q-mb-lg" style="width:35%">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
       </div>
+      <div class="q-mb-lg flex flex-center row">
+        <div class="q-mr-lg">
+          <q-select
+            outlined
+            rounded
+            v-model="filter"
+            use-input
+            input-debounce="0"
+            label="Identificador filter"
+            :options="options"
+            @filter="filterFn"
+            style="width: 250px"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+        <div>
+          <q-select
+            outlined
+            rounded
+            v-model="filter"
+            use-input
+            input-debounce="0"
+            label="Status filter"
+            :options="options"
+            @filter="filterFn"
+            style="width: 250px"
+            behavior="menu"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">
+                  No results
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
+        </div>
+        <q-btn
+          :loading="loading"
+          round
+          size="20px"
+          type="submit"
+          class="q-ml-lg"
+          color="primary"
+          icon="search"
+          no-caps
+        />
+      </div>
     </template>
     <template v-slot:table>
       <div class="full-width flex flex-center q-my-lg"></div>
