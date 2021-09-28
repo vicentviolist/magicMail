@@ -16,6 +16,7 @@
     "aws-amplify-vue": "^2.1.2",
     "axios": "^0.18.1",
     "chart.js": "^3.5.1",
+    "parse": "^3.3.1",
     "quasar": "^1.13.2",
     "ramda": "^0.27.1",
     "tableexport": "^5.2.0",
