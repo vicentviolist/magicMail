@@ -11,6 +11,12 @@ const routes = [
           import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),
       },
       {
+        path: 'registro-vendedor',
+        name: 'registroventas',
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/VentasRegistro.vue'),
+      },
+      {
         path: 'admin',
         name: 'loginAdmin',
         component: () =>
@@ -94,7 +100,9 @@ const routes = [
   {
     path: '/vendedor',
     component: () =>
-      import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayoutVendedor.vue'),
+      import(
+        /* webpackChunkName: "dashboard" */ 'layouts/DashboardLayoutVendedor.vue'
+      ),
     children: [
       {
         path: '',

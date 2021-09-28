@@ -36,7 +36,8 @@
   word-spacing: 4px;
 }
 .m-mt-less {
-  margin-top: -100px;
+  margin-top: -50px;
+  z-index: 1000;
 }
 .m-bg-red {
   opacity: 50%;
