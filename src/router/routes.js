@@ -5,7 +5,7 @@ const routes = [
       import(/* webpackChunkName: "login" */ 'layouts/MainLayout.vue'),
     children: [
       {
-        path: '',
+        path: 'Ventas',
         name: 'login',
         component: () =>
           import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),

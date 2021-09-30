@@ -6,27 +6,23 @@
           MAGIC MAIL
         </div>
         <q-space />
-        <q-select
-          borderless
-          color=""
-          hide-dropdown-icon
-          label="Usuario Vendedor"
-          label-color=""
-          :value="value"
-          @input="val => $emit('input', val)"
-          style="min-width:150px;"
-        >
-          <template v-slot:append>
-            <q-icon
-              v-if="!!value"
-              name="clear"
-              size="xs"
-              @click.stop="$emit('input', null)"
-              class="cursor-pointer"
-            />
-            <q-icon name="keyboard_arrow_down" />
-          </template>
-        </q-select>
+        <div style="width: 200px;">
+          <q-select
+            v-model="sesion"
+            borderless
+            :options="options"
+            hide-dropdown-icon
+            transition-show="scale"
+            transition-hide="scale"
+            label="Vendedor"
+            placeholder="Vendedor"
+            @input="cerrarcesion"
+          >
+            <template v-slot:append>
+              <q-icon name="keyboard_arrow_down" />
+            </template>
+          </q-select>
+        </div>
         <e-avatar size="40px" class="q-mr-md" />
       </div>
     </div>
@@ -42,12 +38,26 @@
 
 <script>
 import EAvatar from 'src/components/local/EAvatar';
+import Parse from 'parse';
 export default {
   components: {
     EAvatar,
   },
   data() {
-    return {};
+    return {
+      options: [{ label: 'cerrar sesion', vale: 1 }],
+      sesion: null,
+    };
+  },
+  methods: {
+    cerrarcesion() {
+      let self = this;
+      Parse.User.logOut().then(user => {
+        Parse.User.current();
+        self.$router.push({ name: 'login' });
+        this.showMsg('error', 'Cerraste sesión');
+      });
+    },
   },
 };
 </script>

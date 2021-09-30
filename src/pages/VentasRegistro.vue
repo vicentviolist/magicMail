@@ -20,13 +20,7 @@
             <q-icon name="check_circle_outline" />
           </template>
         </m-input>
-        <m-input
-          filled
-          class="q-mb-sm"
-          v-model="username"
-          type="password"
-          label="Nombre Completo"
-        >
+        <m-input filled class="q-mb-sm" v-model="username" label="Nombre Completo">
           <template v-slot:prepend>
             <q-icon name="check_circle_outline" />
           </template>
@@ -35,7 +29,6 @@
           filled
           class="q-mb-sm"
           v-model="empresa"
-          type="password"
           label="Nombre de la Empresa"
         >
           <template v-slot:prepend>
@@ -78,6 +71,7 @@ export default {
       password: null,
       email: null,
       empresa: null,
+      role: 'vendedor',
     };
   },
   methods: {
@@ -93,10 +87,16 @@ export default {
         .signUp()
         .then(ok => {
           console.log(ok);
+          this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
         })
         .catch(err => {
           console.log(err);
         });
+    },
+    cerrarcesion() {
+      Parse.User.logOut().then(() => {
+        const currentUser = Parse.User.current(); // this will now be null
+      });
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });

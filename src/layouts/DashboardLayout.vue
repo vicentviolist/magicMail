@@ -6,24 +6,9 @@
           MAGIC MAIL
         </div>
         <q-space />
-        <q-select
-          borderless
-          color=""
-          hide-dropdown-icon
-          label="Usuario Name"
-          label-color=""
-          :value="value"
-          @input="val => $emit('input', val)"
-          style="min-width:150px;"
-        >
+        <q-select borderless v-model="model" :options="options" label="Borderless">
           <template v-slot:append>
-            <q-icon
-              v-if="!!value"
-              name="clear"
-              size="xs"
-              @click.stop="$emit('input', null)"
-              class="cursor-pointer"
-            />
+            <q-icon name="clear" size="xs" class="cursor-pointer" />
             <q-icon name="keyboard_arrow_down" />
           </template>
         </q-select>
@@ -42,12 +27,23 @@
 
 <script>
 import EAvatar from 'src/components/local/EAvatar';
+import Parse from 'parse';
 export default {
   components: {
     EAvatar,
   },
   data() {
-    return {};
+    return {
+      options: [{ label: 'cerrar sesion', vale: 1 }],
+      model: null,
+    };
+  },
+  methods: {
+    cerrarcesion() {
+      Parse.User.logOut().then(() => {
+        const currentUser = Parse.User.current(); // this will now be null
+      });
+    },
   },
 };
 </script>

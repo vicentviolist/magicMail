@@ -127,7 +127,6 @@
           :data="data"
           :columns="columns"
           row-key="id"
-          :filter="filter"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
@@ -137,7 +136,6 @@
         <EGraph
           class="fit"
           :dataCollections="dataCollection"
-          filterLabel="$t('dashboard.filter.institution')"
           v-model="histogram"
           @input="histogram()"
           linechart
@@ -344,9 +342,6 @@ export default {
         },
       ],
     };
-  },
-  created() {
-    this.histogram();
   },
   methods: {
     back() {

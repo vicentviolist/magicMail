@@ -1,15 +1,15 @@
 <template>
   <main-page-tpl>
     <template v-slot:logo></template>
-    <template v-slot:panel>P A N E L  V E N D E D O R</template>
+    <template v-slot:panel>PANEL VENDEDOR</template>
     <template v-slot:title> {{ $t('gral.pages.logIn') }}</template>
     <template v-slot:form>
-      <q-form @submit="handleAuth">
+      <q-form @submit="login">
         <m-input
           filled
           class="q-mb-md q-mt-lg"
           type="email"
-          v-model="form.username"
+          v-model="email"
           :label="$tc('user.label', 1)"
           :rules="[
             val =>
@@ -24,10 +24,10 @@
         <m-input
           filled
           class="q-mb-lg"
-          v-model="form.password"
+          v-model="password"
           type="password"
           :label="$t('user.password')"
-          >
+        >
           <template v-slot:prepend>
             <q-icon name="check_circle_outline" />
           </template>
@@ -41,22 +41,19 @@
           no-caps
           :label="$t('gral.pages.logIn')"
         >
-          
           <template v-slot:loading>
             <q-spinner-facebook />
           </template>
         </q-btn>
       </q-form>
     </template>
-    <template v-slot:pass >
+    <template v-slot:pass>
       <div class="q-mx-auto text-center text-weight-light text-caption">
-           <a href="">¿Olvido su contraseña?</a> 
+        <a href="">¿Olvido su contraseña?</a>
       </div>
       <div class="q-mx-auto text-center text-weight-light q-mb-lg text-caption">
-        ¿Aun no tiene cuenta? <br> <a href="">registrese</a> 
-      </div>
-      <div class="q-mx-auto text-center text-weight-light text-caption">
-         <q-checkbox label="Manten mi sesión abierta" v-model="value" value="value"></q-checkbox>
+        ¿Aun no tiene cuenta? <br />
+        <a href="">registrese</a>
       </div>
     </template>
   </main-page-tpl>
@@ -64,55 +61,30 @@
 
 <script>
 import MainPageTpl from './MainPageTpl';
+import Parse from 'parse';
 
 export default {
   name: 'main-page',
   components: {
-    MainPageTpl
+    MainPageTpl,
   },
   data() {
     return {
       loading: false,
-      value: null,
-      form: {
-        username: null,
-        password: null,
-      },
+      email: '',
+      password: '',
     };
   },
   methods: {
-    async handleAuth() {
-      const { username, password } = this.form;
-      this.loading = true;
-      try {
-        this.user = await this.$Auth.signIn(username, password);
-        if (this.user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-          //this.$router.push({ name: 'newPassword' });
-        } else {
-          this.$router.push({ name: 'dashboard' });
-        }
-      } catch (err) {
-        if (err.code === 'UserNotConfirmedException') {
-          this.showMsg('error', this.$t('errors.amplify.registerIncomplete'));
-        } else if (err.code === 'PasswordResetRequiredException') {
-          this.showMsg('error', this.$t('errors.amplify.passNotLongerValid'));
-        } else if (
-          err.code === 'NotAuthorizedException' ||
-          err.code === 'UserNotFoundException'
-        ) {
-          if (err.message == 'Incorrect username or password.') {
-            this.showMsg('error', this.$t('errors.amplify.invalidCredentials'));
-          } else {
-            this.showMsg('error', this.$t('errors.amplify.disableUser'));
-          }
-        } else {
+    login() {
+      Parse.User.logIn(this.email, this.password)
+        .then(user => {
+          this.$router.push({ name: 'vendedor' });
+          this.showMsg('ok', 'Bienvenido');
+        })
+        .catch(err => {
           this.showMsg('error', err);
-          // eslint-disable-next-line no-console
-          console.log(err);
-        }
-      } finally {
-        this.loading = false;
-      }
+        });
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
