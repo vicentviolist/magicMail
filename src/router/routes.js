@@ -100,9 +100,7 @@ const routes = [
   {
     path: '/vendedor',
     component: () =>
-      import(
-        /* webpackChunkName: "dashboard" */ 'layouts/DashboardLayoutVendedor.vue'
-      ),
+      import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayout.vue'),
     children: [
       {
         path: '',

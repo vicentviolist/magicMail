@@ -49,11 +49,13 @@
     </template>
     <template v-slot:pass>
       <div class="q-mx-auto text-center text-weight-light text-caption">
-        <a href="">¿Olvido su contraseña?</a>
+        <div @click="goToRestorePass" style="cursor: pointer;">
+          ¿Olvido su contraseña?
+        </div>
       </div>
       <div class="q-mx-auto text-center text-weight-light q-mb-lg text-caption">
         ¿Aun no tiene cuenta? <br />
-        <a href="">registrese</a>
+        <div @click="registro" style="cursor: pointer;">Registrate</div>
       </div>
     </template>
   </main-page-tpl>
@@ -88,6 +90,9 @@ export default {
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
+    },
+    registro() {
+      this.$router.push({ name: 'registroventas' });
     },
   },
 };

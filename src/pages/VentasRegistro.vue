@@ -50,7 +50,11 @@
         </q-btn>
       </q-form>
     </template>
-    <template v-slot:pass> </template>
+    <template v-slot:pass>
+      <div class="q-mt-sm" @click="iniciarSesion" style="cursor: pointer;">
+        Inicia sesión
+      </div></template
+    >
   </main-page-tpl>
 </template>
 
@@ -86,11 +90,13 @@ export default {
       user
         .signUp()
         .then(ok => {
-          console.log(ok);
-          this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
+          this.showMsg('ok', 'Bienvenido registrado con exito');
+          this.$router
+            .push({ name: 'vendedor' })
+            .catch(e => this.showMsg('error', e));
         })
         .catch(err => {
-          console.log(err);
+          this.showMsg('error', err);
         });
     },
     cerrarcesion() {
@@ -100,6 +106,9 @@ export default {
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
+    },
+    iniciarSesion() {
+      this.$router.push({ name: 'login' });
     },
   },
 };

@@ -35,6 +35,15 @@
         icon="add"
         no-caps
         color="info"
+      ></q-btn>
+      <q-btn
+        rounded
+        label="Jugutes"
+        class="q-mb-lg"
+        @click="tabla"
+        icon="add"
+        no-caps
+        color="info"
       >
       </q-btn>
     </template>
@@ -145,6 +154,7 @@
 
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
+import Parse from 'parse';
 
 export default {
   name: 'main-page',
@@ -209,9 +219,9 @@ export default {
           align: 'center',
         },
       ],
+      //.include("")
       data: [
         {
-          name: 'Vicente Olivares',
           identificedor: 'IAJ0980LO',
           producto: 'pelota Roja',
           precio: '198.00',
@@ -219,7 +229,6 @@ export default {
           disponibilidad: 'si',
         },
         {
-          name: 'Juan Perez',
           identificedor: 'IBJ0980MV',
           producto: 'pelota Roja',
           precio: '198.00',
@@ -227,7 +236,6 @@ export default {
           disponibilidad: 'si',
         },
         {
-          name: 'Juan Perez',
           identificedor: 'IBJ0980FL',
           producto: 'pelota Roja',
           precio: '198.00',
@@ -235,7 +243,6 @@ export default {
           disponibilidad: 'no',
         },
         {
-          name: 'Juan Perez',
           identificedor: 'IBJ0980PV',
           producto: 'pelota Roja',
           precio: '198.00',
@@ -248,6 +255,32 @@ export default {
   methods: {
     back() {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
+    },
+    async tabla() {
+      let query = new Parse.Query('_User');
+      query.equalTo('empresa', 'Matel');
+      const results = await query.find();
+      /* for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        console.log(object.id + ' - ' + object.get('nombre'));
+      } */
+      let user = Parse.User.current();
+      let tienda = user.get('tiendaPointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes');
+      query2.equalTo('tiendaPointer', tienda);
+      query2.include('juguetePointer');
+      const igual = await query2.find();
+      for (let i = 0; i < igual.length; i++) {
+        const object = igual[i];
+        console.log(object.id);
+      }
+
+      console.log(user.get('nombre'), tienda);
+      if (user) {
+        alert('En sesion');
+      } else {
+        alert('No estas logiado');
+      }
     },
     onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination;

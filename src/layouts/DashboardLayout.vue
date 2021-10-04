@@ -6,12 +6,23 @@
           MAGIC MAIL
         </div>
         <q-space />
-        <q-select borderless v-model="model" :options="options" label="Borderless">
-          <template v-slot:append>
-            <q-icon name="clear" size="xs" class="cursor-pointer" />
-            <q-icon name="keyboard_arrow_down" />
-          </template>
-        </q-select>
+        <div style="width: 200px;">
+          <q-select
+            v-model="sesion"
+            borderless
+            :options="options"
+            hide-dropdown-icon
+            transition-show="scale"
+            transition-hide="scale"
+            label="Usuario"
+            placeholder="Usuario"
+            @input="cerrarcesion"
+          >
+            <template v-slot:append>
+              <q-icon name="keyboard_arrow_down" />
+            </template>
+          </q-select>
+        </div>
         <e-avatar size="40px" class="q-mr-md" />
       </div>
     </div>
@@ -35,13 +46,16 @@ export default {
   data() {
     return {
       options: [{ label: 'cerrar sesion', vale: 1 }],
-      model: null,
+      sesion: null,
     };
   },
   methods: {
     cerrarcesion() {
-      Parse.User.logOut().then(() => {
-        const currentUser = Parse.User.current(); // this will now be null
+      let self = this;
+      Parse.User.logOut().then(user => {
+        Parse.User.current();
+        self.$router.push({ name: 'login' });
+        this.showMsg('error', 'Cerraste sesión');
       });
     },
   },

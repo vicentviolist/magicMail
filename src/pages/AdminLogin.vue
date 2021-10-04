@@ -9,7 +9,7 @@
           filled
           class="q-mb-md q-mt-lg"
           type="email"
-          v-model="form.username"
+          v-model="email"
           :label="$tc('user.label', 1)"
           :rules="[
             val =>
@@ -24,7 +24,7 @@
         <m-input
           filled
           class="q-mb-lg"
-          v-model="form.password"
+          v-model="password"
           type="password"
           :label="$t('user.password')"
         >
@@ -66,46 +66,20 @@ export default {
   data() {
     return {
       loading: false,
-      value: null,
-      form: {
-        username: null,
-        password: null,
-      },
+      email: null,
+      password: null,
     };
   },
   methods: {
-    async handleAuth() {
-      const { username, password } = this.form;
-      this.loading = true;
-      try {
-        this.user = await this.$Auth.signIn(username, password);
-        if (this.user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-          //this.$router.push({ name: 'newPassword' });
-        } else {
-          this.$router.push({ name: 'dashboard' });
-        }
-      } catch (err) {
-        if (err.code === 'UserNotConfirmedException') {
-          this.showMsg('error', this.$t('errors.amplify.registerIncomplete'));
-        } else if (err.code === 'PasswordResetRequiredException') {
-          this.showMsg('error', this.$t('errors.amplify.passNotLongerValid'));
-        } else if (
-          err.code === 'NotAuthorizedException' ||
-          err.code === 'UserNotFoundException'
-        ) {
-          if (err.message == 'Incorrect username or password.') {
-            this.showMsg('error', this.$t('errors.amplify.invalidCredentials'));
-          } else {
-            this.showMsg('error', this.$t('errors.amplify.disableUser'));
-          }
-        } else {
+    login() {
+      Parse.User.logIn(this.email, this.password)
+        .then(user => {
+          this.$router.push({ name: 'vendedor' });
+          this.showMsg('ok', 'Bienvenido');
+        })
+        .catch(err => {
           this.showMsg('error', err);
-          // eslint-disable-next-line no-console
-          console.log(err);
-        }
-      } finally {
-        this.loading = false;
-      }
+        });
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
