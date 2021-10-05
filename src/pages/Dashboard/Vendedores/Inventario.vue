@@ -54,17 +54,16 @@
           :data="data"
           :columns="columns"
           row-key="id"
-          :filter="filter"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
-          <template v-slot:body-cell-img>
+          <template v-slot:body-cell-img="props">
             <q-td style="background: #F8F8F8;">
               <div
-                class="cursor-pointer flex flex-center "
-                @click="jugueteMod = true"
+                class="cursor-pointer flex flex-center cont-img"
+                @click="openModal(props.row.identificador)"
               >
-                <img src="img/images.svg" alt="" />
+                <img :src="props.row.image" class="cont-img-im" alt="" />
               </div>
             </q-td>
           </template>
@@ -74,8 +73,11 @@
         <q-card>
           <q-card-section
             ><div class="flex flex-center justify-between m-modal">
-              <img src="img/dino.svg" class="q-ml-xl q-pl-md" alt="" />
-              <div class="text-h6 q-mr-xl q-pr-xl">Perfil del Producto</div>
+              <div class="img-contain flex flex-center" style="margin-left:70px">
+                <img :src="image" class="img-icon" alt="" />
+              </div>
+              <div class="text-h6 q-mr-xl">Perfil del Producto</div>
+              <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
 
@@ -84,16 +86,38 @@
               <m-input
                 filled
                 class="q-mb-lg"
-                v-model="identificedor"
+                required
+                v-model="identificador"
                 label="IDENTIFICADOR"
               >
               </m-input>
 
-              <m-input filled class="q-mb-lg" v-model="name" label="Producto">
+              <m-input
+                filled
+                required
+                class="q-mb-lg"
+                v-model="producto"
+                label="Producto"
+              >
               </m-input>
-              <m-input filled class="q-mb-lg" v-model="email" label="PRECIO">
+              <m-input
+                filled
+                required
+                class="q-mb-lg"
+                type="number"
+                v-model="precio"
+                label="PRECIO"
+              >
               </m-input>
-              <m-input filled class="q-mb-lg" v-model="password" label="MARCA">
+              <m-input filled required class="q-mb-lg" v-model="marca" label="MARCA">
+              </m-input>
+              <m-input
+                filled
+                required
+                class="q-mb-lg"
+                v-model="disponibilidad"
+                label="DISPONIBILIDAD"
+              >
               </m-input>
             </div>
           </q-card-section>
@@ -103,47 +127,8 @@
               rounded
               label="Guardar"
               class="q-mr-xl"
+              @click="anadir"
               color="primary"
-              @click="addUser"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-      <q-dialog v-model="jugueteMod">
-        <q-card>
-          <q-card-section
-            ><div class="flex flex-center justify-between m-modal">
-              <img src="img/dino.svg" class="q-ml-xl q-pl-md" alt="" />
-              <div class="text-h6 q-mr-xl q-pr-xl">Perfil del Producto</div>
-            </div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-lg flex flex-center ">
-            <div class="" style="width:70%">
-              <m-input
-                filled
-                class="q-mb-lg"
-                v-model="identificedor"
-                label="IDENTIFICADOR"
-              >
-              </m-input>
-
-              <m-input filled class="q-mb-lg" v-model="name" label="Producto">
-              </m-input>
-              <m-input filled class="q-mb-lg" v-model="email" label="PRECIO">
-              </m-input>
-              <m-input filled class="q-mb-lg" v-model="password" label="MARCA">
-              </m-input>
-            </div>
-          </q-card-section>
-
-          <q-card-actions align="right" class="q-mb-xl">
-            <q-btn
-              rounded
-              label="Guardar"
-              class="q-mr-xl"
-              color="primary"
-              @click="addUser"
             />
           </q-card-actions>
         </q-card>
@@ -163,7 +148,16 @@ export default {
   },
   data() {
     return {
+      indexToEdit: null,
+      editMode: false,
       loading: false,
+      foto: null,
+      identificador: null,
+      producto: null,
+      precio: null,
+      image: null,
+      marca: null,
+      disponibilidad: null,
       alert: false,
       jugueteMod: false,
       separator: 'none',
@@ -175,29 +169,27 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           align: 'center',
-          field: row => row.name,
-          sortable: true,
         },
         {
-          name: 'identificedor',
+          name: 'identificador',
           align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           label: 'Identificador',
-          field: 'identificedor',
-          sortable: true,
+          field: 'identificador',
         },
         {
           name: 'producto',
           label: 'producto',
+          align: 'center',
           field: 'producto',
-          sortable: true,
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
         },
         {
           name: 'precio',
           label: 'Precio',
+          align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8; color:red;',
           format: val => `$${val}`,
@@ -206,6 +198,7 @@ export default {
         {
           name: 'marca',
           label: 'Marca',
+          align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'marca',
@@ -213,6 +206,7 @@ export default {
         {
           name: 'disponibilidad',
           label: 'Disponibilidad',
+          align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'disponibilidad',
@@ -222,48 +216,121 @@ export default {
       //.include("")
       data: [
         {
-          identificedor: 'IAJ0980LO',
+          identificador: 'IAJ0980LO',
           producto: 'pelota Roja',
           precio: '198.00',
           marca: 'Matel',
           disponibilidad: 'si',
+          image: 'img/images.svg',
         },
         {
-          identificedor: 'IBJ0980MV',
+          identificador: 'IBJ0980MV',
           producto: 'pelota Roja',
           precio: '198.00',
           marca: 'Matel',
           disponibilidad: 'si',
+          image: 'img/images.svg',
         },
         {
-          identificedor: 'IBJ0980FL',
+          identificador: 'IBJ0980FL',
           producto: 'pelota Roja',
           precio: '198.00',
           marca: 'Matel',
           disponibilidad: 'no',
+          image: 'img/images.svg',
         },
         {
-          identificedor: 'IBJ0980PV',
+          identificador: 'IBJ0980PV',
           producto: 'pelota Roja',
           precio: '198.00',
           marca: 'Matel',
           disponibilidad: 'si',
+          image: 'img/images.svg',
         },
       ],
     };
+  },
+  created() {
+    this.tabla();
   },
   methods: {
     back() {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
+    closeModal() {
+      this.identificador = null;
+      this.producto = null;
+      this.precio = null;
+      this.marca = null;
+      this.disponibilidad = null;
+      this.image = null;
+      this.alert = false;
+    },
+    openModal(id) {
+      //--> se tiene qu llamar el action que consulte por id
+      this.indexToEdit = this.data.findIndex(toy => toy.identificador == id);
+      //<-- aqui termina la consulta al back
+      this.identificador = this.data[this.indexToEdit].identificador;
+      this.producto = this.data[this.indexToEdit].producto;
+      this.precio = this.data[this.indexToEdit].precio;
+      this.marca = this.data[this.indexToEdit].marca;
+      this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
+      this.image = this.data[this.indexToEdit].image;
+      this.alert = true;
+      this.editMode = true;
+    },
+    anadir() {
+      this.alert = false;
+      let identificador = this.identificador;
+      let producto = this.producto;
+      let precio = this.precio;
+      let marca = this.marca;
+      let disponibilidad = this.disponibilidad;
+      let image = this.image;
+      let ob = {
+        identificador,
+        producto,
+        precio,
+        marca,
+        disponibilidad,
+      };
+      if (this.editMode) {
+        // llamar a la api de PUT por id
+        let toysEdited = this.data.map((toy, index) => {
+          if (index == this.indexToEdit) {
+            toy.identificador = this.identificador;
+            toy.producto = this.producto;
+            toy.precio = this.precio;
+            toy.marca = this.marca;
+            toy.disponibilidad = this.disponibilidad;
+          }
+          return toy;
+        });
+        console.log(toysEdited);
+        this.data = toysEdited;
+      } else {
+        // llamar a la api de POST
+        this.data.push(ob);
+      }
+      // limpiar datos del formulario
+      this.identificador = null;
+      this.producto = null;
+      this.precio = null;
+      this.marca = null;
+      this.disponibilidad = null;
+      this.image = null;
+      this.editMode = false;
+    },
     async tabla() {
-      let query = new Parse.Query('_User');
+      //Se utiliza filtrado query.equalTo('empresa', 'Matel'); para imprimir a los usuarios que sean empresa Matel
+      /* let query = new Parse.Query('_User');
       query.equalTo('empresa', 'Matel');
       const results = await query.find();
-      /* for (let i = 0; i < results.length; i++) {
+      for (let i = 0; i < results.length; i++) {
         const object = results[i];
         console.log(object.id + ' - ' + object.get('nombre'));
       } */
+      // .current(); indica el usuario logiado
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
       let query2 = new Parse.Query('TiendaWithJuguetes');
@@ -272,7 +339,15 @@ export default {
       const igual = await query2.find();
       for (let i = 0; i < igual.length; i++) {
         const object = igual[i];
-        console.log(object.id);
+        const juguete = igual[i].get('juguetePointer');
+        /* console.log(object); */
+        let producto = juguete.get('nombre');
+        let image = juguete.get('icon').url();
+        let identificador = object.id;
+        let precio = igual[i].get('unitaryPrice');
+        let disponibilidad = igual[i].get('stock');
+        let ob = { producto, image, identificador, precio, disponibilidad };
+        this.data.push(ob);
       }
 
       console.log(user.get('nombre'), tienda);
@@ -281,83 +356,6 @@ export default {
       } else {
         alert('No estas logiado');
       }
-    },
-    onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
-
-      this.loading = true;
-
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter);
-
-        // get all rows if "All" (0) is selected
-        const fetchCount =
-          rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage;
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(
-          startRow,
-          fetchCount,
-          filter,
-          sortBy,
-          descending,
-        );
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData);
-
-        // don't forget to update local pagination object
-        this.pagination.page = page;
-        this.pagination.rowsPerPage = rowsPerPage;
-        this.pagination.sortBy = sortBy;
-        this.pagination.descending = descending;
-
-        // ...and turn of loading indicator
-        this.loading = false;
-      }, 1500);
-    },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice();
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn =
-          sortBy === 'desc'
-            ? descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-            : descending
-            ? (a, b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy])
-            : (a, b) => parseFloat(a[sortBy]) - parseFloat(b[sortBy]);
-        data.sort(sortFn);
-      }
-
-      return data.slice(startRow, startRow + count);
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
-      if (!filter) {
-        return this.original.length;
-      }
-      let count = 0;
-      this.original.forEach(treat => {
-        if (treat.name.includes(filter)) {
-          ++count;
-        }
-      });
-      return count;
     },
   },
 };

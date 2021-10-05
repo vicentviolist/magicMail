@@ -98,6 +98,10 @@ export default {
         .catch(err => {
           this.showMsg('error', err);
         });
+      let roleACL = new Parse.ACL();
+      roleACL.setPublicReadAccess(true);
+      let role = new Parse.Role('Vendedor', roleACL);
+      role.save();
     },
     cerrarcesion() {
       Parse.User.logOut().then(() => {

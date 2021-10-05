@@ -58,12 +58,25 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
+          <template v-slot:body-cell-name="props">
+            <q-td :props="props">
+              <div
+                class="cursor-pointer flex flex-center"
+                @click="openModal(props.row.identificador)"
+              >
+                {{ props.row.name }}
+              </div>
+            </q-td>
+          </template>
         </q-table>
       </div>
       <q-dialog v-model="alert">
         <q-card>
           <q-card-section>
-            <div class="text-h6">Perfil del Usuario</div>
+            <div class="flex flex-center justify-between m-modal">
+              <div class="text-h6 q-mr-xl">Perfil del Usuario</div>
+              <q-btn flat @click="closeModal" round color="primary" icon="close" />
+            </div>
           </q-card-section>
 
           <q-card-section class="q-pt-lg flex flex-center m-modal">
@@ -73,7 +86,7 @@
               <m-input
                 filled
                 class="q-mb-lg"
-                v-model="identificedor"
+                v-model="identificador"
                 label="IDENTIFICADOR"
               >
               </m-input>
@@ -86,6 +99,23 @@
               </m-input>
               <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
               </m-input>
+              <div class="q-pa-md">
+                <q-file
+                  v-model="files"
+                  label="Pick files"
+                  filled
+                  counter
+                  :counter-label="counterLabelFn"
+                  max-files="3"
+                  accept=".pdf"
+                  multiple
+                  style="max-width: 300px"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="attach_file" />
+                  </template>
+                </q-file>
+              </div>
             </div>
           </q-card-section>
 
@@ -116,9 +146,13 @@ export default {
     return {
       loading: false,
       name: null,
-      identificedor: null,
+      indexToEdit: null,
+      identificador: null,
+      files: null,
       email: null,
       password: null,
+      ultimoPedido: null,
+      editMode: false,
       alert: false,
       filter: '',
       separator: 'none',
@@ -134,12 +168,12 @@ export default {
           sortable: true,
         },
         {
-          name: 'identificedor',
+          name: 'identificador',
           align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           label: 'Identificador',
-          field: 'identificedor',
+          field: 'identificador',
           sortable: true,
         },
         {
@@ -175,7 +209,7 @@ export default {
       data: [
         {
           name: 'Vicente Olivares',
-          identificedor: 'IAJ0980LO',
+          identificador: 'IAJ0980LO',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
@@ -183,7 +217,7 @@ export default {
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
+          identificador: 'IBJ0940FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
@@ -191,7 +225,7 @@ export default {
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
+          identificador: 'IBJ4580FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
@@ -199,7 +233,7 @@ export default {
         },
         {
           name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
+          identificador: 'IBJ080FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
@@ -212,88 +246,88 @@ export default {
     back() {
       this.$router.push({ name: 'admi' }).catch(e => console.log(e));
     },
+    handleAuth() {
+      let user = new Parse.User();
+
+      user.set('username', this.username);
+      user.set('email', this.email);
+      user.set('password', this.password);
+      user.set('empresa', this.empresa);
+
+      user
+        .signUp()
+        .then(ok => {
+          this.showMsg('ok', 'Administrador registrado con exito').catch(e =>
+            this.showMsg('error', e),
+          );
+        })
+        .catch(err => {
+          this.showMsg('error', err);
+        });
+      let roleACL = new Parse.ACL();
+      roleACL.setPublicReadAccess(true);
+      let role = new Parse.Role('Administrador', roleACL);
+      role.save();
+    },
+    closeModal() {
+      this.identificador = null;
+      this.name = null;
+      this.email = null;
+      this.password = null;
+      this.alert = false;
+    },
+    openModal(id) {
+      //--> se tiene qu llamar el action que consulte por id
+      this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+      //<-- aqui termina la consulta al back
+      this.identificador = this.data[this.indexToEdit].identificador;
+      this.name = this.data[this.indexToEdit].name;
+      this.email = this.data[this.indexToEdit].email;
+      this.password = this.data[this.indexToEdit].password;
+      this.alert = true;
+      this.editMode = true;
+    },
+    counterLabelFn({ totalSize, filesNumber, maxFiles }) {
+      return `${filesNumber} files of ${maxFiles} | ${totalSize}`;
+    },
     addUser() {
+      this.alert = false;
       let name = this.name;
-      let identificedor = this.identificedor;
+      let identificador = this.identificador;
       let email = this.email;
       let password = this.password;
-    },
-    onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
-
-      this.loading = true;
-
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter);
-
-        // get all rows if "All" (0) is selected
-        const fetchCount =
-          rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage;
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(
-          startRow,
-          fetchCount,
-          filter,
-          sortBy,
-          descending,
-        );
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData);
-
-        // don't forget to update local pagination object
-        this.pagination.page = page;
-        this.pagination.rowsPerPage = rowsPerPage;
-        this.pagination.sortBy = sortBy;
-        this.pagination.descending = descending;
-
-        // ...and turn of loading indicator
-        this.loading = false;
-      }, 1500);
-    },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice();
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn =
-          sortBy === 'desc'
-            ? descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-            : descending
-            ? (a, b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy])
-            : (a, b) => parseFloat(a[sortBy]) - parseFloat(b[sortBy]);
-        data.sort(sortFn);
+      var hoy = new Date();
+      let registro =
+        hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
+      let ob = {
+        name,
+        identificador,
+        email,
+        password,
+        registro,
+      };
+      if (this.editMode) {
+        // llamar a la api de PUT por id
+        let userId = this.data.map((user, index) => {
+          if (index == this.indexToEdit) {
+            user.identificador = this.identificador;
+            user.name = this.name;
+            user.email = this.email;
+            user.password = this.password;
+          }
+          return user;
+        });
+        this.data = userId;
+      } else {
+        // llamar a la api de POST
+        this.data.push(ob);
       }
-
-      return data.slice(startRow, startRow + count);
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
-      if (!filter) {
-        return this.original.length;
-      }
-      let count = 0;
-      this.original.forEach(treat => {
-        if (treat.name.includes(filter)) {
-          ++count;
-        }
-      });
-      return count;
+      // limpiar datos del formulario
+      this.identificador = null;
+      this.name = null;
+      this.email = null;
+      this.password = null;
+      this.editMode = false;
     },
   },
 };

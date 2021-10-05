@@ -26,64 +26,22 @@
       <div class="q-mb-lg" style="width:35%">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
       </div>
-      <div class="q-mb-lg flex flex-center row">
-        <div class="q-mr-lg">
-          <q-select
-            outlined
-            rounded
-            v-model="filter"
-            use-input
-            input-debounce="0"
-            label="Identificador filter"
-            :options="options"
-            @filter="filterFn"
-            style="width: 250px"
-            behavior="menu"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  No results
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </div>
-        <div>
-          <q-select
-            outlined
-            rounded
-            v-model="filter"
-            use-input
-            input-debounce="0"
-            label="Status filter"
-            :options="options"
-            @filter="filterFn"
-            style="width: 250px"
-            behavior="menu"
-          >
-            <template v-slot:no-option>
-              <q-item>
-                <q-item-section class="text-grey">
-                  No results
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
-        </div>
-        <q-btn
-          :loading="loading"
-          round
-          size="20px"
-          type="submit"
-          class="q-ml-lg"
-          color="primary"
-          icon="search"
-          no-caps
-        />
-      </div>
     </template>
     <template v-slot:table>
+      <div class="full-width flex flex-center q-my-lg">
+        <q-input
+          rounded
+          outlined
+          style="width:55%"
+          debounce="300"
+          v-model="filter"
+          placeholder="Buscar Reporte"
+        >
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
       <div class="full-width flex flex-center q-my-lg"></div>
       <div class="full-width flex flex-center">
         <q-table
@@ -91,6 +49,7 @@
           :data="data"
           :columns="columns"
           row-key="id"
+          :filter="filter"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
@@ -111,6 +70,7 @@ export default {
   data() {
     return {
       loading: false,
+      filter: null,
       columns: [
         {
           name: 'name',
@@ -171,83 +131,6 @@ export default {
   methods: {
     back() {
       this.$router.push({ name: 'admi' }).catch(e => console.log(e));
-    },
-    onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
-
-      this.loading = true;
-
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter);
-
-        // get all rows if "All" (0) is selected
-        const fetchCount =
-          rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage;
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(
-          startRow,
-          fetchCount,
-          filter,
-          sortBy,
-          descending,
-        );
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData);
-
-        // don't forget to update local pagination object
-        this.pagination.page = page;
-        this.pagination.rowsPerPage = rowsPerPage;
-        this.pagination.sortBy = sortBy;
-        this.pagination.descending = descending;
-
-        // ...and turn of loading indicator
-        this.loading = false;
-      }, 1500);
-    },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice();
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn =
-          sortBy === 'desc'
-            ? descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-            : descending
-            ? (a, b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy])
-            : (a, b) => parseFloat(a[sortBy]) - parseFloat(b[sortBy]);
-        data.sort(sortFn);
-      }
-
-      return data.slice(startRow, startRow + count);
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
-      if (!filter) {
-        return this.original.length;
-      }
-      let count = 0;
-      this.original.forEach(treat => {
-        if (treat.name.includes(filter)) {
-          ++count;
-        }
-      });
-      return count;
     },
   },
 };

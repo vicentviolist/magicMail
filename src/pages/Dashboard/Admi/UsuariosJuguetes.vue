@@ -63,22 +63,40 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
+          <template v-slot:body-cell-identificador="props">
+            <q-td :props="props">
+              <div
+                class="cursor-pointer flex flex-center"
+                @click="openModal(props.row.identificador)"
+              >
+                {{ props.row.identificador }}
+              </div>
+            </q-td>
+          </template>
         </q-table>
       </div>
       <q-dialog v-model="alert">
         <q-card>
           <q-card-section>
-            <div class="text-h6">Perfil del Usuario</div>
+            <div class="flex flex-center justify-between m-modal">
+              <div class="text-h6 q-mr-xl">Perfil del Producto</div>
+              <q-btn flat @click="closeModal" round color="primary" icon="close" />
+            </div>
           </q-card-section>
 
           <q-card-section class="q-pt-lg flex flex-center m-modal">
             <div class="" style="width:70%">
-              <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="jugueteria"
+                label="JUGUETERIA"
+              >
               </m-input>
               <m-input
                 filled
                 class="q-mb-lg"
-                v-model="identificedor"
+                v-model="identificador"
                 label="IDENTIFICADOR"
               >
               </m-input>
@@ -119,34 +137,37 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: null,
+      jugueteria: null,
+      identificador: null,
+      email: null,
+      password: null,
+      editMode: null,
       alert: null,
+      indexToEdit: null,
       filter: '',
       columns: [
         {
-          name: 'name',
+          name: 'jugueteria',
           required: true,
           label: 'Jugueteria',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           align: 'left',
-          field: row => row.name,
-          sortable: true,
+          field: 'jugueteria',
         },
         {
-          name: 'identificedor',
+          name: 'identificador',
           align: 'center',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           label: 'Identificador',
-          field: 'identificedor',
-          sortable: true,
+          field: 'identificador',
         },
         {
           name: 'registro',
           label: 'Registro',
           field: 'registro',
-          sortable: true,
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
         },
@@ -174,32 +195,32 @@ export default {
       ],
       data: [
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IAJ0980LO',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IAJ0980LO',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
           ultimoPedido: 'OPG092089',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ65980FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
           ultimoPedido: 'OPG092090',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ45980FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
           ultimoPedido: 'OPG092090',
         },
         {
-          name: 'Jugueteria ABC',
-          identificedor: 'IBJ0980FV',
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ0350FV',
           registro: '12/02/2021',
           email: 'user.test@test.mx',
           password: '*************',
@@ -212,82 +233,62 @@ export default {
     back() {
       this.$router.push({ name: 'admi' }).catch(e => console.log(e));
     },
-    onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
-      const filter = props.filter;
-
-      this.loading = true;
-
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter);
-
-        // get all rows if "All" (0) is selected
-        const fetchCount =
-          rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage;
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage;
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(
-          startRow,
-          fetchCount,
-          filter,
-          sortBy,
-          descending,
-        );
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData);
-
-        // don't forget to update local pagination object
-        this.pagination.page = page;
-        this.pagination.rowsPerPage = rowsPerPage;
-        this.pagination.sortBy = sortBy;
-        this.pagination.descending = descending;
-
-        // ...and turn of loading indicator
-        this.loading = false;
-      }, 1500);
+    closeModal() {
+      this.identificador = null;
+      this.jugueteria = null;
+      this.email = null;
+      this.password = null;
+      this.alert = false;
     },
-
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer(startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice();
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn =
-          sortBy === 'desc'
-            ? descending
-              ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-              : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-            : descending
-            ? (a, b) => parseFloat(b[sortBy]) - parseFloat(a[sortBy])
-            : (a, b) => parseFloat(a[sortBy]) - parseFloat(b[sortBy]);
-        data.sort(sortFn);
-      }
-
-      return data.slice(startRow, startRow + count);
+    openModal(id) {
+      //--> se tiene qu llamar el action que consulte por id
+      this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+      //<-- aqui termina la consulta al back
+      this.identificador = this.data[this.indexToEdit].identificador;
+      this.email = this.data[this.indexToEdit].email;
+      this.jugueteria = this.data[this.indexToEdit].jugueteria;
+      this.password = this.data[this.indexToEdit].password;
+      this.alert = true;
+      this.editMode = true;
     },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount(filter) {
-      if (!filter) {
-        return this.original.length;
+    addUser() {
+      this.alert = false;
+      let identificador = this.identificador;
+      let email = this.email;
+      let jugueteria = this.jugueteria;
+      let password = this.password;
+      var hoy = new Date();
+      let registro =
+        hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
+      let ob = {
+        identificador,
+        jugueteria,
+        email,
+        password,
+        registro,
+      };
+      if (this.editMode) {
+        // llamar a la api de PUT por id
+        let userId = this.data.map((user, index) => {
+          if (index == this.indexToEdit) {
+            user.identificador = this.identificador;
+            user.jugueteria = this.jugueteria;
+            user.email = this.email;
+            user.password = this.password;
+          }
+          return user;
+        });
+        this.data = userId;
+      } else {
+        // llamar a la api de POST
+        this.data.push(ob);
       }
-      let count = 0;
-      this.original.forEach(treat => {
-        if (treat.name.includes(filter)) {
-          ++count;
-        }
-      });
-      return count;
+      // limpiar datos del formulario
+      this.identificador = null;
+      this.email = null;
+      this.password = null;
+      this.editMode = false;
+      this.jugueteria = false;
     },
   },
 };
