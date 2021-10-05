@@ -36,16 +36,6 @@
         no-caps
         color="info"
       ></q-btn>
-      <q-btn
-        rounded
-        label="Jugutes"
-        class="q-mb-lg"
-        @click="tabla"
-        icon="add"
-        no-caps
-        color="info"
-      >
-      </q-btn>
     </template>
     <template v-slot:table>
       <div class="full-width flex flex-center">
@@ -54,6 +44,7 @@
           :data="data"
           :columns="columns"
           row-key="id"
+          :loading="loading"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
@@ -214,40 +205,7 @@ export default {
         },
       ],
       //.include("")
-      data: [
-        {
-          identificador: 'IAJ0980LO',
-          producto: 'pelota Roja',
-          precio: '198.00',
-          marca: 'Matel',
-          disponibilidad: 'si',
-          image: 'img/images.svg',
-        },
-        {
-          identificador: 'IBJ0980MV',
-          producto: 'pelota Roja',
-          precio: '198.00',
-          marca: 'Matel',
-          disponibilidad: 'si',
-          image: 'img/images.svg',
-        },
-        {
-          identificador: 'IBJ0980FL',
-          producto: 'pelota Roja',
-          precio: '198.00',
-          marca: 'Matel',
-          disponibilidad: 'no',
-          image: 'img/images.svg',
-        },
-        {
-          identificador: 'IBJ0980PV',
-          producto: 'pelota Roja',
-          precio: '198.00',
-          marca: 'Matel',
-          disponibilidad: 'si',
-          image: 'img/images.svg',
-        },
-      ],
+      data: [],
     };
   },
   created() {
@@ -265,6 +223,7 @@ export default {
       this.disponibilidad = null;
       this.image = null;
       this.alert = false;
+      this.editMode = false;
     },
     openModal(id) {
       //--> se tiene qu llamar el action que consulte por id
@@ -322,6 +281,7 @@ export default {
       this.editMode = false;
     },
     async tabla() {
+      this.loading = true;
       //Se utiliza filtrado query.equalTo('empresa', 'Matel'); para imprimir a los usuarios que sean empresa Matel
       /* let query = new Parse.Query('_User');
       query.equalTo('empresa', 'Matel');
@@ -349,13 +309,7 @@ export default {
         let ob = { producto, image, identificador, precio, disponibilidad };
         this.data.push(ob);
       }
-
-      console.log(user.get('nombre'), tienda);
-      if (user) {
-        alert('En sesion');
-      } else {
-        alert('No estas logiado');
-      }
+      this.loading = false;
     },
   },
 };

@@ -1,9 +1,9 @@
 <template>
-  <q-page class="flex flex-center column bg-primary">
+  <q-page class="flex flex-center column fondo">
     <q-card class="q-px-sm q-mb-md flex flex-center e-card-login">
       <div style="width:100%;" class="q-px-xl-lg">
         <div class="text-center m-mt-less text-primary">
-          <h3>Magic Mail</h3>
+          <img src="/img/title.png" class="img-title" alt="" />
         </div>
         <div class="space-pan-text text-grey-8 text-center q-pb-SM q-pb-xl-xl">
           <slot name="panel" class="space-pan-text"> </slot>
@@ -41,5 +41,13 @@
 }
 .m-bg-red {
   opacity: 50%;
+}
+.fondo {
+  background-image: url('/img/fondo.png');
+  background-size: contain;
+}
+.img-title {
+  height: 11vh;
+  width: 250px;
 }
 </style>

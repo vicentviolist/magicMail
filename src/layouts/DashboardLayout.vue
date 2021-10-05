@@ -1,9 +1,9 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <div elevated class=" bg-white q-px-lg q-py-sm">
+    <q-header class=" bg-white q-px-lg q-py-sm">
       <div class="row items-center">
-        <div class="text-primary text-h2">
-          MAGIC MAIL
+        <div class="">
+          <img src="/img/title.png" class="img-dash" alt="" />
         </div>
         <q-space />
         <div style="width: 200px;">
@@ -25,7 +25,7 @@
         </div>
         <e-avatar size="40px" class="q-mr-md" />
       </div>
-    </div>
+    </q-header>
     <q-page-container>
       <router-view />
       <q-footer class="text-center text-black bg-white text-weight-light q-py-lg"
@@ -50,15 +50,15 @@ export default {
       sesion: null,
     };
   },
-  computed:{
-    ...mapState('auth', ['role'])
+  computed: {
+    ...mapState('auth', ['role']),
   },
   methods: {
     cerrarcesion() {
       let self = this;
       Parse.User.logOut().then(user => {
         Parse.User.current();
-        if (this.role =='administrador') {
+        if (this.role == 'administrador') {
           self.$router.push({ name: 'loginAdmin' });
         } else {
           self.$router.push({ name: 'login' });
