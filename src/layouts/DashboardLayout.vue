@@ -39,6 +39,7 @@
 <script>
 import EAvatar from 'src/components/local/EAvatar';
 import Parse from 'parse';
+import { mapState } from 'vuex';
 export default {
   components: {
     EAvatar,
@@ -49,12 +50,19 @@ export default {
       sesion: null,
     };
   },
+  computed:{
+    ...mapState('auth', ['role'])
+  },
   methods: {
     cerrarcesion() {
       let self = this;
       Parse.User.logOut().then(user => {
         Parse.User.current();
-        self.$router.push({ name: 'login' });
+        if (this.role =='administrador') {
+          self.$router.push({ name: 'loginAdmin' });
+        } else {
+          self.$router.push({ name: 'login' });
+        }
         this.showMsg('error', 'Cerraste sesión');
       });
     },

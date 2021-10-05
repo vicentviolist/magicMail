@@ -5,7 +5,7 @@ const routes = [
       import(/* webpackChunkName: "login" */ 'layouts/MainLayout.vue'),
     children: [
       {
-        path: 'Ventas',
+        path: '',
         name: 'login',
         component: () =>
           import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),
@@ -96,6 +96,10 @@ const routes = [
         },
       },
     ],
+    meta:  {
+      requiresAuth: true,
+      onlyAdmin: true,
+    },
   },
   {
     path: '/vendedor',
@@ -142,11 +146,12 @@ const routes = [
               ),
           },
         ],
-        meta: {
-          requiresAuth: false,
-        },
       },
     ],
+    meta:  {
+      requiresAuth: true,
+      onlyAdmin: false,
+    },
   },
 ];
 

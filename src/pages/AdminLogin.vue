@@ -35,7 +35,7 @@
         <q-btn
           :loading="loading"
           rounded
-          @click="admiV"
+          @click="login"
           class="q-mb-md full-width"
           color="primary"
           no-caps
@@ -57,6 +57,7 @@
 
 <script>
 import MainPageTpl from './MainPageTpl';
+import Parse from 'parse';
 
 export default {
   name: 'main-page',
@@ -74,7 +75,9 @@ export default {
     login() {
       Parse.User.logIn(this.email, this.password)
         .then(user => {
-          this.$router.push({ name: 'vendedor' });
+          console.log('admin', user);
+          this.$store.dispatch('auth/setInfoUserLogged', 'administrador');
+          this.$router.push({ name: 'admi' });
           this.showMsg('ok', 'Bienvenido');
         })
         .catch(err => {
@@ -83,9 +86,6 @@ export default {
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });
-    },
-    admiV() {
-      this.$router.push({ name: 'admi' });
     },
   },
 };

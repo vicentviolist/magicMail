@@ -81,6 +81,8 @@ export default {
     login() {
       Parse.User.logIn(this.email, this.password)
         .then(user => {
+          console.log(user);
+          this.$store.dispatch('auth/setInfoUserLogged', 'vendedor');
           this.$router.push({ name: 'vendedor' });
           this.showMsg('ok', 'Bienvenido');
         })
