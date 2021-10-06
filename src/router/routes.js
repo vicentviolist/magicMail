@@ -11,6 +11,18 @@ const routes = [
           import(/* webpackChunkName: "login" */ 'pages/VendedorLogin.vue'),
       },
       {
+        path: 'contrato',
+        name: 'contrato',
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/Contrato.vue'),
+      },
+      {
+        path: 'terminos',
+        name: 'terminos',
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/TerminosCondiciones.vue'),
+      },
+      {
         path: 'registro-vendedor',
         name: 'registroventas',
         component: () =>
@@ -96,7 +108,7 @@ const routes = [
         },
       },
     ],
-    meta:  {
+    meta: {
       requiresAuth: true,
       onlyAdmin: true,
     },
@@ -148,7 +160,7 @@ const routes = [
         ],
       },
     ],
-    meta:  {
+    meta: {
       requiresAuth: true,
       onlyAdmin: false,
     },

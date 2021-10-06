@@ -29,7 +29,7 @@
   min-width: 330px;
   width: 25%;
   min-height: 336px;
-  height: 69vh;
+  height: 75vh;
   border-radius: 30px;
 }
 .space-pan-text {

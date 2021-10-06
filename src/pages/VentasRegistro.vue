@@ -35,6 +35,19 @@
             <q-icon name="check_circle_outline" />
           </template>
         </m-input>
+
+        <div class="flex flex-center">
+          <q-checkbox size="xs" v-model="condiciones" />
+          <div class="text-caption" @click="terminosPage" style="cursor:pointer;">
+            Acepto terminos y condicones
+          </div>
+        </div>
+        <div class="flex flex-center">
+          <q-checkbox size="xs" v-model="contrato" />
+          <div class="text-caption" @click="contratoPage" style="cursor:pointer;">
+            Acepto el contrato
+          </div>
+        </div>
         <q-btn
           :loading="loading"
           rounded
@@ -70,6 +83,8 @@ export default {
   data() {
     return {
       loading: false,
+      contrato: false,
+      condiciones: false,
       value: null,
       username: null,
       password: null,
@@ -86,18 +101,24 @@ export default {
       user.set('email', this.email);
       user.set('password', this.password);
       user.set('empresa', this.empresa);
-
-      user
-        .signUp()
-        .then(ok => {
-          this.showMsg('ok', 'Bienvenido registrado con exito');
-          this.$router
-            .push({ name: 'vendedor' })
-            .catch(e => this.showMsg('error', e));
-        })
-        .catch(err => {
-          this.showMsg('error', err);
-        });
+      if (this.contrato && this.condiciones) {
+        user
+          .signUp()
+          .then(ok => {
+            this.showMsg('ok', 'Bienvenido registrado con exito');
+            this.$router
+              .push({ name: 'vendedor' })
+              .catch(e => this.showMsg('error', e));
+          })
+          .catch(err => {
+            this.showMsg('error', err);
+          });
+      } else {
+        this.showMsg(
+          'error',
+          'No haz aceptaado el contrato y terminos y condiciones',
+        );
+      }
     },
     cerrarcesion() {
       Parse.User.logOut().then(() => {
@@ -109,6 +130,12 @@ export default {
     },
     iniciarSesion() {
       this.$router.push({ name: 'login' });
+    },
+    contratoPage() {
+      this.$router.push({ name: 'contrato' });
+    },
+    terminosPage() {
+      this.$router.push({ name: 'terminos' });
     },
   },
 };
