@@ -68,6 +68,14 @@
                 <img :src="image" class="img-icon" alt="" />
               </div>
               <div class="text-h6 q-mr-xl">Perfil del Producto</div>
+              <q-btn
+                @click="closeModal"
+                v-if="editMode"
+                style="margin-left:-50px;"
+                rounded
+                label="Eliminar"
+                color="dark"
+              />
               <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
@@ -115,7 +123,16 @@
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
+              v-if="editMode"
+              @click="anadir"
               rounded
+              class="q-mr-xl"
+              label="Editar"
+              color="primary"
+            />
+            <q-btn
+              rounded
+              v-if="!editMode"
               label="Guardar"
               class="q-mr-xl"
               @click="anadir"
@@ -305,8 +322,9 @@ export default {
         let image = juguete.get('icon').url();
         let identificador = object.id;
         let precio = igual[i].get('unitaryPrice');
+        let marca = juguete.get('marca');
         let disponibilidad = igual[i].get('stock');
-        let ob = { producto, image, identificador, precio, disponibilidad };
+        let ob = { producto, image, identificador, precio, disponibilidad, marca };
         this.data.push(ob);
       }
       this.loading = false;

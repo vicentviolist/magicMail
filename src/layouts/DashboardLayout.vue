@@ -14,7 +14,7 @@
             hide-dropdown-icon
             transition-show="scale"
             transition-hide="scale"
-            label="Usuario"
+            :label="name"
             placeholder="Usuario"
             @input="cerrarcesion"
           >
@@ -47,13 +47,29 @@ export default {
   data() {
     return {
       options: [{ label: 'cerrar sesion', vale: 1 }],
+      email: null,
+      name: null,
       sesion: null,
     };
   },
   computed: {
     ...mapState('auth', ['role']),
   },
+  created() {
+    this.pruebas();
+  },
   methods: {
+    pruebas() {
+      let user = Parse.User.current();
+      let name = user.get('username');
+      let email = user.get('email');
+      if (user) {
+        this.email = email;
+        this.name = name;
+      } else {
+        // show the signup or login page
+      }
+    },
     cerrarcesion() {
       let self = this;
       Parse.User.logOut().then(user => {
