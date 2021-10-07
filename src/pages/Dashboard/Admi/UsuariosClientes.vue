@@ -186,6 +186,7 @@ export default {
           sortable: true,
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
+          align: 'center',
         },
         {
           name: 'email',
@@ -193,6 +194,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'email',
+          align: 'center',
         },
         {
           name: 'password',
@@ -200,6 +202,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'password',
+          align: 'center',
         },
         {
           name: 'ultimoPedido',
@@ -207,6 +210,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'ultimoPedido',
+          align: 'center',
         },
       ],
       data: [],
@@ -344,34 +348,29 @@ export default {
       const query = new Parse.Query(users);
       const results = await query.find();
       let obj = results.find(elemento => elemento.id == this.identificador);
-      console.log(obj);
-      /*  obj.destroy().then(
-        obj => {
-          this.showMsg('ok', obj);
-        },
-        error => {
-          this.showMsg('error', error);
-        },
-      ); */
+      console.log(obj.id);
+      Parse.Cloud.run('deleteUserWithId', { userId: obj.id }).then(function(
+        ratings,
+      ) {});
     },
     async tabla() {
       this.loading = true;
-      const users = Parse.Object.extend('_User');
+      const users = Parse.User.extend('_User');
       const query = new Parse.Query(users);
       const results = await query.find();
       for (let i = 0; i < results.length; i++) {
         const object = results[i];
-        console.log(object.id + ' - ' + object.get('nombre'));
         let name = object.get('nombre');
         let email = object.get('username');
         let password = object.get('password');
-        let registro = object.get('updatedAt');
+        let registro = object.updatedAt;
         let identificador = object.id;
         let ob = { name, identificador, email, password, registro };
         this.data.push(ob);
       }
       this.loading = false;
     },
+    delete() {},
   },
 };
 </script>

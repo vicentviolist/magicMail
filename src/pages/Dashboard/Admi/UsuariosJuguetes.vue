@@ -192,6 +192,7 @@ export default {
           field: 'registro',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
+          align: 'center',
         },
         {
           name: 'email',
@@ -199,6 +200,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'email',
+          align: 'center',
         },
         {
           name: 'password',
@@ -206,6 +208,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'password',
+          align: 'center',
         },
         {
           name: 'ultimoPedido',
@@ -213,6 +216,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'ultimoPedido',
+          align: 'center',
         },
       ],
       data: [],

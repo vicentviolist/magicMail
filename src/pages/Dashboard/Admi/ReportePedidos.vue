@@ -61,6 +61,7 @@
 
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
+import Parse from 'parse';
 
 export default {
   name: 'main-page',
@@ -73,64 +74,115 @@ export default {
       filter: null,
       columns: [
         {
-          name: 'name',
+          name: 'identificador',
           required: true,
-          label: 'Nombre',
-          align: 'left',
-          field: row => row.name,
-          sortable: true,
-        },
-        {
-          name: 'identificedor',
-          align: 'center',
           label: 'Identificador',
-          field: 'identificedor',
-          sortable: true,
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          align: 'left',
+          field: 'identificador',
         },
-        { name: 'registro', label: 'Registro', field: 'registro', sortable: true },
-        { name: 'email', label: 'Correo Electronico', field: 'email' },
-        { name: 'password', label: 'Password', field: 'password' },
-        { name: 'ultimoPedido', label: 'Último Pedido', field: 'ultimoPedido' },
+        {
+          name: 'jugueteria',
+          align: 'center',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          label: 'Jugueteria',
+          field: 'jugueteria',
+        },
+        {
+          name: 'registro',
+          label: 'Registro',
+          field: 'registro',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          align: 'center',
+        },
+        {
+          name: 'user',
+          label: 'Usuario',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'user',
+          align: 'center',
+        },
+        {
+          name: 'costo',
+          label: 'Costo',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'costo',
+          format: val => `$${val}`,
+          align: 'center',
+        },
+        {
+          name: 'status',
+          label: 'Status',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'status',
+          align: 'center',
+        },
       ],
-      data: [
-        {
-          name: 'Vicente Olivares',
-          identificedor: 'IAJ0980LO',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092089',
-        },
-        {
-          name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-        {
-          name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-        {
-          name: 'Juan Perez',
-          identificedor: 'IBJ0980FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-      ],
+      data: [],
     };
+  },
+  created() {
+    this.table();
   },
   methods: {
     back() {
       this.$router.push({ name: 'admi' }).catch(e => console.log(e));
+    },
+    async table() {
+      /* let user = Parse.User.current();
+      let tienda = user.get('tiendaPointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes');
+      query2.equalTo('tiendaPointer', tienda);
+      query2.include('juguetePointer');
+      const igual = await query2.find();
+      for (let i = 0; i < igual.length; i++) {
+        const object = igual[i];
+        const juguete = igual[i].get('juguetePointer');
+        let producto = juguete.get('nombre');
+        let image = juguete.get('icon').url();
+        let identificador = object.id;
+        let precio = igual[i].get('unitaryPrice');
+        let marca = juguete.get('marca');
+        let disponibilidad = igual[i].get('stock');
+        let ob = { producto, image, identificador, precio, disponibilidad, marca };
+        this.data.push(ob);
+      } */
+
+      /*  const GameScore = Parse.Object.extend("GameScore");
+const query = new Parse.Query(GameScore);
+query.equalTo("playerName", "Dan Stemkoski");
+const results = await query.find();
+alert("Successfully retrieved " + results.length + " scores.");
+// Do something with the returned Parse.Object values
+for (let i = 0; i < results.length; i++) {
+  const object = results[i];
+  alert(object.id + ' - ' + object.get('playerName'));
+} */
+
+      this.loading = true;
+      const compras = Parse.Object.extend('Compras');
+      const query = new Parse.Query(compras);
+      const results = await query.find();
+
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        let identificador = object.id;
+        let jugueteria = object.get('empresa');
+        let costo = object.get('total');
+        let registro = object.get('umpdateAt');
+
+        let usuarioPoint = results[i].get('userPointer');
+        let user = usuarioPoint.get('username');
+        let ob = { identificador, costo, registro, user };
+        this.data.push(ob);
+      }
+      this.loading = false;
     },
   },
 };

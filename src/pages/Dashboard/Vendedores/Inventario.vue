@@ -251,22 +251,16 @@ export default {
       this.image = this.data[this.indexToEdit].image;
       this.alert = true;
       this.editMode = true; */
-      const users = Parse.Object.extend('_User');
-      const query = new Parse.Query(users);
-      const results = await query.find();
-      for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        this.indexToEdit = this.data.findIndex(user => user.identificador == id);
-        //<-- aqui termina la consulta al back
-        this.identificador = this.data[this.indexToEdit].identificador;
-        this.producto = this.data[this.indexToEdit].producto;
-        this.precio = this.data[this.indexToEdit].precio;
-        this.marca = this.data[this.indexToEdit].marca;
-        this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
-        this.image = this.data[this.indexToEdit].image;
-        this.alert = true;
-        this.editMode = true;
-      }
+      this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+      //<-- aqui termina la consulta al back
+      this.identificador = this.data[this.indexToEdit].identificador;
+      this.producto = this.data[this.indexToEdit].producto;
+      this.precio = this.data[this.indexToEdit].precio;
+      this.marca = this.data[this.indexToEdit].marca;
+      this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
+      this.image = this.data[this.indexToEdit].image;
+      this.alert = true;
+      this.editMode = true;
     },
     anadir() {
       this.alert = false;
@@ -311,11 +305,11 @@ export default {
       this.editMode = false;
     },
     async nuevoJuguete() {
-      let user = Parse.User.current();
+      /* let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
       let query2 = new Parse.Query('TiendaWithJuguetes');
       query2.equalTo('tiendaPointer', tienda);
-      const igual = await query2.find();
+      const igual = await query2.find(); */
 
       const Juguete = Parse.Object.extend('Juguetes');
       const Juguete2 = Parse.Object.extend('TiendaWithJuguetes');
@@ -363,19 +357,19 @@ export default {
       ); */
     },
     async editar() {
-      const Juguetes = Parse.Object.extend('Juguetes');
-      const query = new Parse.Query(Juguetes);
-      const results = await query.find();
-      let obj = results.find(elemento => elemento.id == this.identificador);
-      console.log(obj);
-      /* obj.destroy().then(
-        obj => {
-          this.showMsg('ok', obj);
-        },
-        error => {
-          this.showMsg('error', error);
-        },
-      ); */
+      let user = Parse.User.current();
+      let tienda = user.get('tiendaPointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes');
+      query2.equalTo('tiendaPointer', tienda);
+      query2.include('juguetePointer');
+      const igual = await query2.find();
+      let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
+
+      jugueteObj.save().then(jugueteObj => {
+        jugueteObj.set('nombre', this.producto);
+        console.log(jugueteObj);
+        return jugueteObj.save();
+      });
     },
     async tabla() {
       this.loading = true;
