@@ -4,7 +4,7 @@
     <template v-slot:panel>A D M I N I S T R A D O R</template>
     <template v-slot:title> {{ $t('gral.pages.logIn') }}</template>
     <template v-slot:form>
-      <q-form @submit="handleAuth">
+      <q-form @submit="login">
         <m-input
           filled
           class="q-mb-md q-mt-lg"
@@ -73,16 +73,20 @@ export default {
   },
   methods: {
     login() {
-      Parse.User.logIn(this.email, this.password)
-        .then(user => {
-          console.log('admin', user);
-          this.$store.dispatch('auth/setInfoUserLogged', 'administrador');
-          this.$router.push({ name: 'admi' });
-          this.showMsg('ok', 'Bienvenido');
-        })
-        .catch(err => {
-          this.showMsg('error', err);
-        });
+      if (this.email === 'juliogarcia.np@gmail.com') {
+        Parse.User.logIn(this.email, this.password)
+          .then(user => {
+            console.log('admin', user);
+            this.$store.dispatch('auth/setInfoUserLogged', 'administrador');
+            this.$router.push({ name: 'admi' });
+            this.showMsg('ok', 'Bienvenido');
+          })
+          .catch(err => {
+            this.showMsg('error', err);
+          });
+      } else {
+        this.showMsg('error', 'Tu no tiener permisos para entrar');
+      }
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });

@@ -97,8 +97,9 @@ export default {
     handleAuth() {
       let user = new Parse.User();
 
-      user.set('username', this.username);
+      user.set('nombre', this.username);
       user.set('email', this.email);
+      user.set('username', this.email);
       user.set('password', this.password);
       user.set('empresa', this.empresa);
       if (this.contrato && this.condiciones) {

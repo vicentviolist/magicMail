@@ -55,22 +55,6 @@ const routes = [
           ),
         children: [
           {
-            path: 'list',
-            name: 'dashboard',
-            component: () =>
-              import(
-                /* webpackChunkName: "dashboard" */ 'pages/Dashboard/List/ListData.vue'
-              ),
-          },
-          {
-            path: 'bulk-load',
-            name: 'bulkLoad',
-            component: () =>
-              import(
-                /* webpackChunkName: "bulk" */ 'pages/Dashboard/Bulk/BulkLoad.vue'
-              ),
-          },
-          {
             path: 'home-admi',
             name: 'admi',
             component: () =>
@@ -100,6 +84,14 @@ const routes = [
             component: () =>
               import(
                 /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/ReportePedidos.vue'
+              ),
+          },
+          {
+            path: 'reporte-pagos',
+            name: 'reportePagos',
+            component: () =>
+              import(
+                /* webpackChunkName: "Usuarios Clientes" */ 'pages/Dashboard/Admi/ReportePago.vue'
               ),
           },
         ],

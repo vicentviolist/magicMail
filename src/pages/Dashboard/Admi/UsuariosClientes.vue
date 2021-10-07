@@ -53,6 +53,7 @@
           style="height: 300px; width:55%;"
           :data="data"
           :columns="columns"
+          :loading="loading"
           row-key="id"
           :filter="filter"
           virtual-scroll
@@ -75,6 +76,14 @@
           <q-card-section>
             <div class="flex flex-center justify-between m-modal">
               <div class="text-h6 q-mr-xl">Perfil del Usuario</div>
+              <q-btn
+                @click="borrar"
+                v-if="editMode"
+                style="margin-left:-50px;"
+                rounded
+                label="Eliminar"
+                color="dark"
+              />
               <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
@@ -82,13 +91,6 @@
           <q-card-section class="q-pt-lg flex flex-center m-modal">
             <div class="" style="width:70%">
               <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
-              </m-input>
-              <m-input
-                filled
-                class="q-mb-lg"
-                v-model="identificador"
-                label="IDENTIFICADOR"
-              >
               </m-input>
               <m-input
                 filled
@@ -125,7 +127,7 @@
               label="Guardar"
               class="q-mr-xl"
               color="primary"
-              @click="addUser"
+              @click="nuevoUsuarui"
             />
           </q-card-actions>
         </q-card>
@@ -136,6 +138,7 @@
 
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
+import Parse from 'parse';
 
 export default {
   name: 'main-page',
@@ -206,41 +209,11 @@ export default {
           field: 'ultimoPedido',
         },
       ],
-      data: [
-        {
-          name: 'Vicente Olivares',
-          identificador: 'IAJ0980LO',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092089',
-        },
-        {
-          name: 'Juan Perez',
-          identificador: 'IBJ0940FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-        {
-          name: 'Juan Perez',
-          identificador: 'IBJ4580FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-        {
-          name: 'Juan Perez',
-          identificador: 'IBJ080FV',
-          registro: '12/02/2021',
-          email: 'user.test@test.mx',
-          password: '*************',
-          ultimoPedido: 'OPG092090',
-        },
-      ],
+      data: [],
     };
+  },
+  created() {
+    this.tabla();
   },
   methods: {
     back() {
@@ -276,9 +249,9 @@ export default {
       this.password = null;
       this.alert = false;
     },
-    openModal(id) {
+    async openModal(id) {
       //--> se tiene qu llamar el action que consulte por id
-      this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+      /* this.indexToEdit = this.data.findIndex(user => user.identificador == id);
       //<-- aqui termina la consulta al back
       this.identificador = this.data[this.indexToEdit].identificador;
       this.name = this.data[this.indexToEdit].name;
@@ -286,6 +259,23 @@ export default {
       this.password = this.data[this.indexToEdit].password;
       this.alert = true;
       this.editMode = true;
+      console.log(user); */
+      const users = Parse.Object.extend('_User');
+      const query = new Parse.Query(users);
+      const results = await query.find();
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        object.id = this.identificador;
+        this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+        //<-- aqui termina la consulta al back
+        this.identificador = this.data[this.indexToEdit].identificador;
+        let obj = results.find(elemento => elemento.id == this.identificador);
+        this.name = this.data[this.indexToEdit].name;
+        this.email = this.data[this.indexToEdit].email;
+        this.password = this.data[this.indexToEdit].password;
+        this.alert = true;
+        this.editMode = true;
+      }
     },
     counterLabelFn({ totalSize, filesNumber, maxFiles }) {
       return `${filesNumber} files of ${maxFiles} | ${totalSize}`;
@@ -311,7 +301,7 @@ export default {
         let userId = this.data.map((user, index) => {
           if (index == this.indexToEdit) {
             user.identificador = this.identificador;
-            user.name = this.name;
+            user.nombre = this.name;
             user.email = this.email;
             user.password = this.password;
           }
@@ -328,6 +318,59 @@ export default {
       this.email = null;
       this.password = null;
       this.editMode = false;
+    },
+    async nuevoUsuarui() {
+      const Usuario = Parse.Object.extend('_User');
+      const usuario = new Usuario();
+      const file = new Parse.File('icon.jpg', this.image);
+
+      usuario.set('username', this.email);
+      usuario.set('nombre', this.name);
+      usuario.set('password', this.password);
+      usuario.set('email', this.email);
+
+      usuario.save().then(
+        usuario => {
+          // Execute any logic that should take place after the object is saved.
+          alert('New object created with objectId: ' + usuario.id);
+        },
+        error => {
+          alert('Failed to create new object, with error code: ' + error.message);
+        },
+      );
+    },
+    async borrar() {
+      const users = Parse.Object.extend('_User');
+      const query = new Parse.Query(users);
+      const results = await query.find();
+      let obj = results.find(elemento => elemento.id == this.identificador);
+      console.log(obj);
+      /*  obj.destroy().then(
+        obj => {
+          this.showMsg('ok', obj);
+        },
+        error => {
+          this.showMsg('error', error);
+        },
+      ); */
+    },
+    async tabla() {
+      this.loading = true;
+      const users = Parse.Object.extend('_User');
+      const query = new Parse.Query(users);
+      const results = await query.find();
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        console.log(object.id + ' - ' + object.get('nombre'));
+        let name = object.get('nombre');
+        let email = object.get('username');
+        let password = object.get('password');
+        let registro = object.get('updatedAt');
+        let identificador = object.id;
+        let ob = { name, identificador, email, password, registro };
+        this.data.push(ob);
+      }
+      this.loading = false;
     },
   },
 };

@@ -17,10 +17,10 @@
         <m-card
           isMini
           description=""
-          color="bg-secondary"
+          color="bg-positive"
           iconFondo="img/mini-blocks.svg"
         />
-        <div class="text-h4 m-y-auto">Usuarios Juguetes</div>
+        <div class="text-h4 m-y-auto">Reporte Pagos</div>
       </div>
     </template>
     <template v-slot:desc>
@@ -77,24 +77,28 @@
       </div>
       <q-dialog v-model="alert">
         <q-card>
-          <q-card-section
-            ><div class="flex flex-center justify-between m-modal">
-              <div class="text-h6 q-mr-xl">Perfil del Usuario Jugueteria</div>
-              <q-btn
-                @click="closeModal"
-                v-if="editMode"
-                style="margin-left:-50px;"
-                rounded
-                label="Eliminar"
-                color="dark"
-              />
+          <q-card-section>
+            <div class="flex flex-center justify-between m-modal">
+              <div class="text-h6 q-mr-xl">Perfil del Producto</div>
               <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
 
-          <q-card-section class="q-pt-lg flex flex-center ">
+          <q-card-section class="q-pt-lg flex flex-center m-modal">
             <div class="" style="width:70%">
-              <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="jugueteria"
+                label="JUGUETERIA"
+              >
+              </m-input>
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-model="identificador"
+                label="IDENTIFICADOR"
+              >
               </m-input>
               <m-input
                 filled
@@ -105,38 +109,16 @@
               </m-input>
               <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
               </m-input>
-              <div class="q-pa-md">
-                <q-file
-                  v-model="file0ne"
-                  label="Selecciona tu RFC"
-                  filled
-                  accept=".pdf"
-                  style="max-width: 300px"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="attach_file" />
-                  </template>
-                </q-file>
-              </div>
             </div>
           </q-card-section>
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
-              v-if="editMode"
-              @click="editar"
               rounded
-              class="q-mr-xl"
-              label="Editar"
-              color="primary"
-            />
-            <q-btn
-              rounded
-              v-if="!editMode"
               label="Guardar"
               class="q-mr-xl"
-              @click="nuevoUsuaruiJugueteria"
               color="primary"
+              @click="addUser"
             />
           </q-card-actions>
         </q-card>
@@ -147,7 +129,6 @@
 
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
-import Parse from 'parse';
 
 export default {
   name: 'main-page',
@@ -159,9 +140,6 @@ export default {
       loading: null,
       jugueteria: null,
       identificador: null,
-      name: null,
-      document: null,
-      file0ne: null,
       email: null,
       password: null,
       editMode: null,
@@ -215,11 +193,41 @@ export default {
           field: 'ultimoPedido',
         },
       ],
-      data: [],
+      data: [
+        {
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IAJ0980LO',
+          registro: '12/02/2021',
+          email: 'user.test@test.mx',
+          password: '*************',
+          ultimoPedido: 'OPG092089',
+        },
+        {
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ65980FV',
+          registro: '12/02/2021',
+          email: 'user.test@test.mx',
+          password: '*************',
+          ultimoPedido: 'OPG092090',
+        },
+        {
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ45980FV',
+          registro: '12/02/2021',
+          email: 'user.test@test.mx',
+          password: '*************',
+          ultimoPedido: 'OPG092090',
+        },
+        {
+          jugueteria: 'Jugueteria ABC',
+          identificador: 'IBJ0350FV',
+          registro: '12/02/2021',
+          email: 'user.test@test.mx',
+          password: '*************',
+          ultimoPedido: 'OPG092090',
+        },
+      ],
     };
-  },
-  created() {
-    this.tabla();
   },
   methods: {
     back() {
@@ -243,7 +251,7 @@ export default {
       this.alert = true;
       this.editMode = true;
     },
-    editar() {
+    addUser() {
       this.alert = false;
       let identificador = this.identificador;
       let email = this.email;
@@ -281,45 +289,6 @@ export default {
       this.password = null;
       this.editMode = false;
       this.jugueteria = false;
-    },
-    async nuevoUsuaruiJugueteria() {
-      const Usuario = Parse.Object.extend('_User');
-      const usuario = new Usuario();
-      const file = new Parse.File('icon.jpg', this.image);
-
-      usuario.set('username', this.email);
-      usuario.set('nombre', this.name);
-      usuario.set('password', this.password);
-      usuario.set('email', this.email);
-
-      usuario.save().then(
-        usuario => {
-          // Execute any logic that should take place after the object is saved.
-          alert('New object created with objectId: ' + usuario.id);
-        },
-        error => {
-          alert('Failed to create new object, with error code: ' + error.message);
-        },
-      );
-    },
-    async tabla() {
-      this.loading = true;
-      const users = Parse.Object.extend('_User');
-      const query = new Parse.Query(users);
-      const results = await query.find();
-      for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        console.log(object.id + ' - ' + object.get('nombre'));
-        let name = object.get('nombre');
-        let email = object.get('username');
-        let password = object.get('password');
-        let registro = object.get('updatedAt');
-        let jugueteria = object.get('empresa');
-        let identificador = object.id;
-        let ob = { name, identificador, email, password, registro, jugueteria };
-        this.data.push(ob);
-      }
-      this.loading = false;
     },
   },
 };

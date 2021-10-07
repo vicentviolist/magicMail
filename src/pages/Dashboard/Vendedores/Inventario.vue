@@ -69,7 +69,7 @@
               </div>
               <div class="text-h6 q-mr-xl">Perfil del Producto</div>
               <q-btn
-                @click="closeModal"
+                @click="borrar"
                 v-if="editMode"
                 style="margin-left:-50px;"
                 rounded
@@ -82,15 +82,6 @@
 
           <q-card-section class="q-pt-lg flex flex-center ">
             <div class="" style="width:70%">
-              <m-input
-                filled
-                class="q-mb-lg"
-                required
-                v-model="identificador"
-                label="IDENTIFICADOR"
-              >
-              </m-input>
-
               <m-input
                 filled
                 required
@@ -118,13 +109,20 @@
                 label="DISPONIBILIDAD"
               >
               </m-input>
+              <q-file
+                borderless
+                v-if="!editMode"
+                v-model="image"
+                accept=".jpg, image/*"
+                label="Elije tu foto"
+              />
             </div>
           </q-card-section>
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
               v-if="editMode"
-              @click="anadir"
+              @click="editar"
               rounded
               class="q-mr-xl"
               label="Editar"
@@ -135,7 +133,7 @@
               v-if="!editMode"
               label="Guardar"
               class="q-mr-xl"
-              @click="anadir"
+              @click="nuevoJuguete"
               color="primary"
             />
           </q-card-actions>
@@ -159,7 +157,6 @@ export default {
       indexToEdit: null,
       editMode: false,
       loading: false,
-      foto: null,
       identificador: null,
       producto: null,
       precio: null,
@@ -242,8 +239,8 @@ export default {
       this.alert = false;
       this.editMode = false;
     },
-    openModal(id) {
-      //--> se tiene qu llamar el action que consulte por id
+    async openModal(id) {
+      /*  //--> se tiene qu llamar el action que consulte por id
       this.indexToEdit = this.data.findIndex(toy => toy.identificador == id);
       //<-- aqui termina la consulta al back
       this.identificador = this.data[this.indexToEdit].identificador;
@@ -253,7 +250,23 @@ export default {
       this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
       this.image = this.data[this.indexToEdit].image;
       this.alert = true;
-      this.editMode = true;
+      this.editMode = true; */
+      const users = Parse.Object.extend('_User');
+      const query = new Parse.Query(users);
+      const results = await query.find();
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        this.indexToEdit = this.data.findIndex(user => user.identificador == id);
+        //<-- aqui termina la consulta al back
+        this.identificador = this.data[this.indexToEdit].identificador;
+        this.producto = this.data[this.indexToEdit].producto;
+        this.precio = this.data[this.indexToEdit].precio;
+        this.marca = this.data[this.indexToEdit].marca;
+        this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
+        this.image = this.data[this.indexToEdit].image;
+        this.alert = true;
+        this.editMode = true;
+      }
     },
     anadir() {
       this.alert = false;
@@ -280,7 +293,7 @@ export default {
             toy.marca = this.marca;
             toy.disponibilidad = this.disponibilidad;
           }
-          return toy;
+          return toy.save();
         });
         console.log(toysEdited);
         this.data = toysEdited;
@@ -296,6 +309,73 @@ export default {
       this.disponibilidad = null;
       this.image = null;
       this.editMode = false;
+    },
+    async nuevoJuguete() {
+      let user = Parse.User.current();
+      let tienda = user.get('tiendaPointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes');
+      query2.equalTo('tiendaPointer', tienda);
+      const igual = await query2.find();
+
+      const Juguete = Parse.Object.extend('Juguetes');
+      const Juguete2 = Parse.Object.extend('TiendaWithJuguetes');
+      const juguete = new Juguete();
+      const juguete2 = new Juguete();
+      const file = new Parse.File('icon.jpg', this.image);
+
+      juguete.set('nombre', this.producto);
+      juguete.set('marca', this.marca);
+      juguete.set('icon', file);
+
+      juguete.save().then(
+        juguete => {
+          // Execute any logic that should take place after the object is saved.
+          alert('New object created with objectId: ' + juguete.id);
+        },
+        error => {
+          alert('Failed to create new object, with error code: ' + error.message);
+        },
+      );
+      juguete2.save().then(
+        juguete => {
+          // Execute any logic that should take place after the object is saved.
+          alert('New object created with objectId: ' + juguete.id);
+        },
+        error => {
+          alert('Failed to create new object, with error code: ' + error.message);
+        },
+      );
+      console.log(igual);
+    },
+    async borrar() {
+      const users = Parse.Object.extend('_User');
+      const query = new Parse.Query(users);
+      const results = await query.find();
+      let obj = results.find(elemento => elemento.id == this.identificador);
+      console.log(obj);
+      /* obj.destroy().then(
+        obj => {
+          this.showMsg('ok', obj);
+        },
+        error => {
+          this.showMsg('error', error);
+        },
+      ); */
+    },
+    async editar() {
+      const Juguetes = Parse.Object.extend('Juguetes');
+      const query = new Parse.Query(Juguetes);
+      const results = await query.find();
+      let obj = results.find(elemento => elemento.id == this.identificador);
+      console.log(obj);
+      /* obj.destroy().then(
+        obj => {
+          this.showMsg('ok', obj);
+        },
+        error => {
+          this.showMsg('error', error);
+        },
+      ); */
     },
     async tabla() {
       this.loading = true;
@@ -317,7 +397,6 @@ export default {
       for (let i = 0; i < igual.length; i++) {
         const object = igual[i];
         const juguete = igual[i].get('juguetePointer');
-        /* console.log(object); */
         let producto = juguete.get('nombre');
         let image = juguete.get('icon').url();
         let identificador = object.id;

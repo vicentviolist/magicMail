@@ -21,7 +21,7 @@
             description="Pedidos"
           />
         </div>
-        <div @click="userC">
+        <div @click="repPagos">
           <m-card
             color="bg-positive"
             iconFondo="img/001-hand.svg"
@@ -53,6 +53,9 @@ export default {
     },
     repP() {
       this.$router.push({ name: 'reportePedidos' }).catch(e => console.log(e));
+    },
+    repPagos() {
+      this.$router.push({ name: 'reportePagos' }).catch(e => console.log(e));
     },
   },
 };
