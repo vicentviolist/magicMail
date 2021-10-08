@@ -183,13 +183,23 @@ export default {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
     async editar() {
-      const user = Parse.User.current();
-      user.find();
-      this.identificador = user;
-      for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        console.log(object.id + ' - ' + object.get('nombre'));
-      }
+      let user = Parse.User.current();
+      let username = this.name;
+      let email = this.email;
+      user
+        .save({
+          email: email,
+          username: username,
+        })
+        .then(
+          user => {
+            this.showMsg('ok', 'Editado');
+          },
+          error => {
+            this.showMsg('ok', error);
+          },
+        );
+      this.alert = false;
     },
     pruebas() {
       let user = Parse.User.current();
