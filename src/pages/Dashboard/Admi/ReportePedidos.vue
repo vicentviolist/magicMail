@@ -137,7 +137,7 @@ export default {
           field: 'costo',
           format: val => `$${val}`,
           align: 'center',
-        },
+        } /* 
         {
           name: 'status',
           label: 'Status',
@@ -145,7 +145,7 @@ export default {
           style: 'background: #F8F8F8;',
           field: 'status',
           align: 'center',
-        },
+        }, */,
       ],
       data: [],
     };
@@ -187,19 +187,22 @@ export default {
       this.loading = true;
       let compras = Parse.Object.extend('Compras');
       let query = new Parse.Query(compras);
+      query.include('tiendasRelation');
+      query.include('userPointer');
       let results = await query.find();
 
       for (let i = 0; i < results.length; i++) {
         let pedido = results[i];
 
-        let jugueteria = pedido.get('empresa');
+        let jugueteria = 'ninonmk';
         let costo = pedido.get('total');
         let registro = pedido.attributes.createdAt.toLocaleDateString();
 
         let usuarioPoint = results[i].get('userPointer');
-        let identificador = usuarioPoint.id;
+        let identificador = results[i].id;
+        console.log(results[i].attributes.userPointer.attributes.id);
         let user = usuarioPoint.get('username');
-        let ob = { identificador, costo, registro, user };
+        let ob = { identificador, jugueteria, costo, registro, user };
         this.data.push(ob);
       }
       this.loading = false;

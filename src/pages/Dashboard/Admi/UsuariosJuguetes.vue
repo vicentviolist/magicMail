@@ -245,6 +245,7 @@ export default {
       this.identificador = null;
       this.jugueteria = null;
       this.email = null;
+      this.editMode = false;
       this.password = null;
       this.alert = false;
     },
@@ -259,6 +260,16 @@ export default {
       this.name = this.data[this.indexToEdit].name;
       this.alert = true;
       this.editMode = true;
+    },
+    async borrar() {
+      let users = Parse.Object.extend('_User');
+      let query = new Parse.Query(users);
+      let results = await query.find();
+      let obj = results.find(elemento => elemento.id == this.identificador);
+      console.log(obj.id);
+      Parse.Cloud.run('deleteUserWithId', { userId: obj.id }).then(function(
+        ratings,
+      ) {});
     },
     editar() {
       this.alert = false;
@@ -299,7 +310,7 @@ export default {
       this.editMode = false;
       this.jugueteria = false;
     },
-    async nuevoUsuaruiJugueteria() {
+    async nuevoUsuarui() {
       const Usuario = Parse.Object.extend('_User');
       const usuario = new Usuario();
       const file = new Parse.File('icon.jpg', this.image);
@@ -308,6 +319,7 @@ export default {
       usuario.set('nombre', this.name);
       usuario.set('password', this.password);
       usuario.set('email', this.email);
+      usuario.set('empresa', this.jugueteria);
 
       usuario.save().then(
         usuario => {
@@ -318,6 +330,7 @@ export default {
           alert('Failed to create new object, with error code: ' + error.message);
         },
       );
+      this.alert = false;
     },
     async tabla() {
       this.loading = true;

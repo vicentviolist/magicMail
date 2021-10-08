@@ -101,7 +101,7 @@
                 label="Editar"
                 class="q-mr-xl"
                 color="primary"
-                @click="nuevoUsuarui"
+                @click="editar"
               />
             </q-card-actions>
           </q-card>
@@ -166,6 +166,7 @@ export default {
       loading: false,
       alert: false,
       alert2: false,
+      identificador: null,
       email: null,
       nombre: null,
       name: null,
@@ -181,6 +182,15 @@ export default {
     chagePassword() {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
+    async editar() {
+      const user = Parse.User.current();
+      user.find();
+      this.identificador = user;
+      for (let i = 0; i < results.length; i++) {
+        const object = results[i];
+        console.log(object.id + ' - ' + object.get('nombre'));
+      }
+    },
     pruebas() {
       let user = Parse.User.current();
       let name = user.get('username');
@@ -191,7 +201,6 @@ export default {
         this.nombre = email;
         this.name = name;
       } else {
-        // show the signup or login page
       }
     },
     modalChange() {

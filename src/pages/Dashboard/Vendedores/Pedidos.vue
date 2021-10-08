@@ -121,12 +121,27 @@
           />
         </div>
       </div>
+      <div class="full-width flex flex-center q-mb-lg">
+        <q-input
+          rounded
+          outlined
+          style="width:55%"
+          debounce="300"
+          v-model="filter"
+          placeholder="Buscar Reporte"
+        >
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
       <div class="full-width flex flex-center" v-if="isGraph == false">
         <q-table
           style="height: 300px; width:55%;"
           :data="data"
           :columns="columns"
           row-key="id"
+          :filter="filter"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
@@ -148,6 +163,7 @@
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
 import { exportFile } from 'quasar';
+import Parse from 'parse';
 import { colors } from 'quasar';
 
 function wrapCsvValue(val, formatFn) {
@@ -164,14 +180,14 @@ export default {
   components: {
     MainTempl,
   },
+  created() {
+    this.table();
+  },
   data() {
     return {
       loading: false,
       histogram: null,
-      filterData: {
-        identificador: null,
-        status: null,
-      },
+      filter: null,
       isGraph: false,
       columns: [
         {
@@ -197,6 +213,7 @@ export default {
           field: 'registro',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
+          align: 'center',
         },
         {
           name: 'user',
@@ -204,6 +221,7 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'user',
+          align: 'center',
         },
         {
           name: 'costo',
@@ -211,49 +229,11 @@ export default {
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'costo',
-        },
-        {
-          name: 'status',
-          label: 'Status',
-          headerStyle: 'color: #6D7F9F',
-          style: 'background: #F8F8F8;',
-          field: 'status',
+          align: 'center',
+          format: val => `$${val}`,
         },
       ],
-      data: [
-        {
-          jugueteria: 'Jugueteria ABC',
-          identificador: 'IAJ0980LO',
-          registro: '12/02/2021',
-          user: 'user.test@test.mx',
-          costo: 1879,
-          status: 'Recibido',
-        },
-        {
-          jugueteria: 'Jugueteria ABC',
-          identificador: 'IBJ0980FV',
-          registro: '12/02/2021',
-          user: 'user.test@test.mx',
-          costo: 1879,
-          status: 'En camino',
-        },
-        {
-          jugueteria: 'Jugueteria ABC',
-          identificador: 'IBJ0980FV',
-          registro: '12/02/2021',
-          user: 'user.test@test.mx',
-          costo: 1879,
-          status: 'En Camino',
-        },
-        {
-          jugueteria: 'Jugueteria ABC',
-          identificador: 'IBJ0980FV',
-          registro: '12/02/2021',
-          user: 'user.test@test.mx',
-          costo: 1879,
-          status: 'Recibido',
-        },
-      ],
+      data: [],
       dataCollection: [
         {
           datasets: [
@@ -352,6 +332,32 @@ export default {
     },
     tableSection() {
       this.isGraph = false;
+    },
+    async table() {
+      this.loading = true;
+      this.alert = false;
+      let user = Parse.User.current();
+      let tiendaId = user.get('tiendaPointer');
+      let compras = Parse.Object.extend('Compras');
+      let query = new Parse.Query(compras);
+      query.include('tiendasRelation');
+      query.include('userPointer');
+      query.equalTo('tiendasRelation', tiendaId);
+      /* query.matchesKeyInQuery('tiendasRelation', 'objectId', tiendaId); */
+      let results = await query.find();
+      for (let i = 0; i < results.length; i++) {
+        let pedido = results[i];
+        let jugueteria = tiendaId.id;
+        let costo = pedido.get('total');
+        let registro = pedido.attributes.createdAt.toLocaleDateString();
+
+        let usuarioPoint = results[i].get('userPointer');
+        let identificador = results[i].id;
+        let user = usuarioPoint.get('username');
+        let ob = { identificador, costo, registro, user, jugueteria };
+        this.data.push(ob);
+      }
+      this.loading = false;
     },
     exportTable() {
       const content = [this.columns.map(col => wrapCsvValue(col.label))]
