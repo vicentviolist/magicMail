@@ -36,7 +36,10 @@ $add: #1f85f7;
 }
 
 .m-modal {
-  width: 500px;
+  max-width: 500px;
+  min-width: 300px;
+  min-height: 400px;
+  max-height: 500px;
 }
 .img-contain {
   width: 70px;

@@ -25,7 +25,7 @@
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
+        En esta parte podras dar de Alta, Baja, Editar, todos tus juguetes.
       </div>
       <q-btn
         rounded
@@ -63,19 +63,12 @@
       <q-dialog v-model="alert">
         <q-card>
           <q-card-section
-            ><div class="flex flex-center justify-between m-modal">
+            ><div class="flex flex-center justify-between ">
               <div class="img-contain flex flex-center" style="margin-left:70px">
                 <img :src="image" class="img-icon" alt="" />
               </div>
               <div class="text-h6 q-mr-xl">Perfil del Producto</div>
-              <q-btn
-                @click="borrar"
-                v-if="editMode"
-                style="margin-left:-50px;"
-                rounded
-                label="Eliminar"
-                color="dark"
-              />
+
               <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
@@ -120,6 +113,15 @@
           </q-card-section>
 
           <q-card-actions align="right" class="q-mb-xl">
+            <q-btn
+              @click="borrar"
+              v-if="editMode"
+              style="margin-left:-50px;"
+              rounded
+              class="q-mr-xl"
+              label="Eliminar"
+              color="dark"
+            />
             <q-btn
               v-if="editMode"
               @click="editar"

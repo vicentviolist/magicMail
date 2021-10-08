@@ -16,41 +16,137 @@
         <m-card
           isMini
           color="bg-perfil"
-          iconFondo="img/mini-report.svg"
+          isCustom
+          iconFondo="img/programer.svg"
           description=""
         />
         <div class="text-h4 m-y-auto">Perfil</div>
       </div>
     </template>
     <template v-slot:desc>
-      <div class="q-mb-lg" style="width:20%">
-        Hola {{ name }} En esta sección podra editar tu perfil!
-      </div>
+      <h6 style="width:40%">
+        Hola {{ name }} En esta sección podras editar tu perfil!
+      </h6>
     </template>
     <template v-slot:table>
-      <div class="row q-col-gutter-lg">
-        <div>tu email es: {{ email }}</div>
-        <div class="">
-          <m-input filled class="q-mb-md q-mt-lg" type="email" label="" />
+      <div class="q-mt-xl flex" style="width:70%">
+        <div class="q-mr-xl">
+          <div class="flex q-mt-lg">
+            <div>
+              Email: <strong> {{ nombre }}</strong>
+            </div>
+          </div>
+          <div class="flex q-mt-lg">
+            <div>
+              Nombre: <strong>{{ name }}</strong>
+            </div>
+          </div>
+          <div class="flex q-mt-lg">
+            <div><strong>Contraseña</strong></div>
+          </div>
         </div>
-        <div class="">
-          <m-input filled class="q-mb-md q-mt-lg" type="email" label="" />
+        <div class="q-ml-xl">
+          <div class="flex q-mt-lg">
+            <div><strong>¿Deseas configurar tu perfil?</strong></div>
+            <q-btn
+              rounded
+              label="Confiruración"
+              class="q-ml-xl"
+              @click="alert = true"
+              color="primary"
+            ></q-btn>
+          </div>
         </div>
-        <div class="">
-          <m-input filled class="q-mb-md q-mt-lg" type="email" label="" />
-        </div>
-        <div class="">
-          <m-input filled class="q-mb-md q-mt-lg" type="email" label="" />
-        </div>
-        <div class="">
-          <q-btn
-            filled
-            class="q-mb-md q-mt-lg"
-            type="email"
-            label="Pruebas"
-            @click="pruebas"
-          />
-        </div>
+        <q-dialog v-model="alert">
+          <q-card class="m-modal">
+            <q-card-section>
+              <div class="flex flex-center justify-between  q-mx-lg">
+                <div class="text-h6">Perfil de configuración</div>
+
+                <q-btn
+                  flat
+                  @click="alert = false"
+                  class="q-ml-xl"
+                  rounded
+                  color="primary"
+                  label="cancelar"
+                />
+              </div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-lg flex flex-center">
+              <div class="" style="width:70%">
+                <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
+                </m-input>
+                <m-input
+                  filled
+                  class="q-mb-lg"
+                  v-model="email"
+                  label="CORREO ELECTRONICO"
+                >
+                </m-input>
+                <q-btn
+                  @click="modalChange"
+                  class="q-ml-xl"
+                  rounded
+                  color="primary"
+                  label="Cambiar contraseña"
+                />
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right" class="q-mb-xl">
+              <q-btn
+                rounded
+                label="Editar"
+                class="q-mr-xl"
+                color="primary"
+                @click="nuevoUsuarui"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+        <q-dialog v-model="alert2">
+          <q-card class="m-modal">
+            <q-card-section>
+              <div class="flex flex-center justify-between  q-mx-lg">
+                <q-btn
+                  flat
+                  @click="alert2 = false"
+                  class="q-ml-xl"
+                  rounded
+                  color="primary"
+                  label="cancelar"
+                />
+              </div>
+            </q-card-section>
+
+            <q-card-section class="q-pt-lg flex flex-center">
+              <div class="" style="width:70%">
+                <div class="q-mb-xl">
+                  Obten enlace para restablecer, revisa tu correo
+                </div>
+                <m-input
+                  filled
+                  class="q-mb-lg"
+                  v-model="email"
+                  label="CORREO ELECTRONICO"
+                >
+                </m-input>
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right" class="q-mb-xl">
+              <q-btn
+                rounded
+                label="Recuperar"
+                class="q-mr-xl"
+                color="primary"
+                @click="passwordReset"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </div>
     </template>
   </MainTempl>
@@ -68,7 +164,10 @@ export default {
   data() {
     return {
       loading: false,
+      alert: false,
+      alert2: false,
       email: null,
+      nombre: null,
       name: null,
     };
   },
@@ -79,16 +178,35 @@ export default {
     back() {
       this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
     },
+    chagePassword() {
+      this.$router.push({ name: 'vendedor' }).catch(e => console.log(e));
+    },
     pruebas() {
       let user = Parse.User.current();
       let name = user.get('username');
+      let nombre = user.get('nombre');
       let email = user.get('email');
       if (user) {
         this.email = email;
+        this.nombre = email;
         this.name = name;
       } else {
         // show the signup or login page
       }
+    },
+    modalChange() {
+      this.alert = false;
+      this.alert2 = true;
+    },
+    passwordReset() {
+      let email = this.email;
+      Parse.User.requestPasswordReset(email)
+        .then(() => {
+          this.showMsg('ok', 'Correo enviado, revisa tu correo y inica sesión');
+        })
+        .catch(error => {
+          this.showMsg('Error: ' + error.code + ' ' + error.message);
+        });
     },
   },
 };

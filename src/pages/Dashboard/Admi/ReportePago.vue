@@ -16,9 +16,10 @@
       <div class="row flex flex-center">
         <m-card
           isMini
+          isCustom
           description=""
           color="bg-positive"
-          iconFondo="img/mini-blocks.svg"
+          iconFondo="img/001-hand.svg"
         />
         <div class="text-h4 m-y-auto">Reporte Pagos</div>
       </div>

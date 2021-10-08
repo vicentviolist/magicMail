@@ -20,9 +20,7 @@
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente quas
-        quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
-        autem.
+        En esta parte podras dar de Alta, Baja, Editar, todos los usuarios clientes.
       </div>
       <q-btn
         rounded
@@ -72,23 +70,23 @@
         </q-table>
       </div>
       <q-dialog v-model="alert">
-        <q-card>
+        <q-card class="m-modal">
           <q-card-section>
-            <div class="flex flex-center justify-between m-modal">
-              <div class="text-h6 q-mr-xl">Perfil del Usuario</div>
+            <div class="flex flex-center justify-between  q-mx-lg">
+              <div class="text-h6">Perfil del Usuario</div>
+
               <q-btn
-                @click="borrar"
-                v-if="editMode"
-                style="margin-left:-50px;"
+                flat
+                @click="closeModal"
+                class="q-ml-xl"
                 rounded
-                label="Eliminar"
-                color="dark"
+                color="primary"
+                label="cancelar"
               />
-              <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
 
-          <q-card-section class="q-pt-lg flex flex-center m-modal">
+          <q-card-section class="q-pt-lg flex flex-center">
             <div class="" style="width:70%">
               <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
               </m-input>
@@ -99,32 +97,46 @@
                 label="CORREO ELECTRONICO"
               >
               </m-input>
-              <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-if="!editMode"
+                v-model="password"
+                :type="isPwd ? 'password' : 'text'"
+                hint="Password with toggle"
+                label="PASSWORD"
+              >
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPwd = !isPwd"
+                  />
+                </template>
               </m-input>
-              <div class="q-pa-md">
-                <q-file
-                  v-model="files"
-                  label="Pick files"
-                  filled
-                  counter
-                  :counter-label="counterLabelFn"
-                  max-files="3"
-                  accept=".pdf"
-                  multiple
-                  style="max-width: 300px"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="attach_file" />
-                  </template>
-                </q-file>
-              </div>
             </div>
           </q-card-section>
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
+              v-if="editMode"
+              @click="borrar"
               rounded
-              label="Guardar"
+              label="Eliminar"
+              color="dark"
+            />
+            <q-btn
+              v-if="!editMode"
+              rounded
+              label="Crear"
+              class="q-mr-xl"
+              color="primary"
+              @click="nuevoUsuarui"
+            />
+            <q-btn
+              rounded
+              v-if="editMode"
+              label="Editar"
               class="q-mr-xl"
               color="primary"
               @click="nuevoUsuarui"
@@ -148,10 +160,10 @@ export default {
   data() {
     return {
       loading: false,
+      isPwd: true,
       name: null,
       indexToEdit: null,
       identificador: null,
-      files: null,
       email: null,
       password: null,
       ultimoPedido: null,
@@ -252,6 +264,7 @@ export default {
       this.email = null;
       this.password = null;
       this.alert = false;
+      this.editMode = false;
     },
     async openModal(id) {
       //--> se tiene qu llamar el action que consulte por id
@@ -278,8 +291,8 @@ export default {
         this.email = this.data[this.indexToEdit].email;
         this.password = this.data[this.indexToEdit].password;
         this.alert = true;
-        this.editMode = true;
       }
+      this.editMode = true;
     },
     counterLabelFn({ totalSize, filesNumber, maxFiles }) {
       return `${filesNumber} files of ${maxFiles} | ${totalSize}`;
@@ -344,9 +357,9 @@ export default {
       );
     },
     async borrar() {
-      const users = Parse.Object.extend('_User');
-      const query = new Parse.Query(users);
-      const results = await query.find();
+      let users = Parse.Object.extend('_User');
+      let query = new Parse.Query(users);
+      let results = await query.find();
       let obj = results.find(elemento => elemento.id == this.identificador);
       console.log(obj.id);
       Parse.Cloud.run('deleteUserWithId', { userId: obj.id }).then(function(
@@ -355,16 +368,16 @@ export default {
     },
     async tabla() {
       this.loading = true;
-      const users = Parse.User.extend('_User');
-      const query = new Parse.Query(users);
-      const results = await query.find();
+      let users = Parse.User.extend('_User');
+      let query = new Parse.Query(users);
+      let results = await query.find();
       for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        let name = object.get('nombre');
-        let email = object.get('username');
-        let password = object.get('password');
-        let registro = object.updatedAt;
-        let identificador = object.id;
+        let usuario = results[i];
+        let name = usuario.get('nombre');
+        let email = usuario.get('username');
+        let password = '*****************';
+        let registro = usuario.attributes.createdAt.toLocaleDateString();
+        let identificador = usuario.id;
         let ob = { name, identificador, email, password, registro };
         this.data.push(ob);
       }

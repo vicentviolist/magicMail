@@ -25,9 +25,8 @@
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente quas
-        quis tenetur voluptate officiis expedita eligendi labore saepe, eminima
-        autem.
+        En esta parte podras dar de Alta, Baja, Editar, todos los usuarios
+        vendedores.
       </div>
       <q-btn
         rounded
@@ -57,44 +56,47 @@
         <q-table
           style="height: 300px; width:55%;"
           :data="data"
+          :loading="loading"
           :columns="columns"
           row-key="id"
           :filter="filter"
           virtual-scroll
           :rows-per-page-options="[0]"
         >
-          <template v-slot:body-cell-identificador="props">
+          <template v-slot:body-cell-jugueteria="props">
             <q-td :props="props">
               <div
                 class="cursor-pointer flex flex-center"
                 @click="openModal(props.row.identificador)"
               >
-                {{ props.row.identificador }}
+                {{ props.row.jugueteria }}
               </div>
             </q-td>
           </template>
         </q-table>
       </div>
       <q-dialog v-model="alert">
-        <q-card>
-          <q-card-section
-            ><div class="flex flex-center justify-between m-modal">
-              <div class="text-h6 q-mr-xl">Perfil del Usuario Jugueteria</div>
+        <q-card class="m-modal">
+          <q-card-section>
+            <div class="flex flex-center justify-between  q-mx-lg">
+              <div class="text-h6">Perfil del Usuario</div>
+
               <q-btn
+                flat
                 @click="closeModal"
-                v-if="editMode"
-                style="margin-left:-50px;"
+                class="q-ml-xl"
                 rounded
-                label="Eliminar"
-                color="dark"
+                color="primary"
+                label="cancelar"
               />
-              <q-btn flat @click="closeModal" round color="primary" icon="close" />
             </div>
           </q-card-section>
 
-          <q-card-section class="q-pt-lg flex flex-center ">
+          <q-card-section class="q-pt-lg flex flex-center">
             <div class="" style="width:70%">
               <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
+              </m-input>
+              <m-input filled class="q-mb-lg" v-model="jugueteria" label="EMPRESA">
               </m-input>
               <m-input
                 filled
@@ -103,40 +105,49 @@
                 label="CORREO ELECTRONICO"
               >
               </m-input>
-              <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
+              <m-input
+                filled
+                class="q-mb-lg"
+                v-if="!editMode"
+                v-model="password"
+                :type="isPwd ? 'password' : 'text'"
+                hint="Password with toggle"
+                label="PASSWORD"
+              >
+                <template v-slot:append>
+                  <q-icon
+                    :name="isPwd ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="isPwd = !isPwd"
+                  />
+                </template>
               </m-input>
-              <div class="q-pa-md">
-                <q-file
-                  v-model="file0ne"
-                  label="Selecciona tu RFC"
-                  filled
-                  accept=".pdf"
-                  style="max-width: 300px"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="attach_file" />
-                  </template>
-                </q-file>
-              </div>
             </div>
           </q-card-section>
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
               v-if="editMode"
-              @click="editar"
+              @click="borrar"
               rounded
+              label="Eliminar"
+              color="dark"
+            />
+            <q-btn
+              v-if="!editMode"
+              rounded
+              label="Crear"
               class="q-mr-xl"
-              label="Editar"
               color="primary"
+              @click="nuevoUsuarui"
             />
             <q-btn
               rounded
-              v-if="!editMode"
-              label="Guardar"
+              v-if="editMode"
+              label="Editar"
               class="q-mr-xl"
-              @click="nuevoUsuaruiJugueteria"
               color="primary"
+              @click="nuevoUsuarui"
             />
           </q-card-actions>
         </q-card>
@@ -157,6 +168,7 @@ export default {
   data() {
     return {
       loading: null,
+      isPwd: false,
       jugueteria: null,
       identificador: null,
       name: null,
@@ -244,6 +256,7 @@ export default {
       this.email = this.data[this.indexToEdit].email;
       this.jugueteria = this.data[this.indexToEdit].jugueteria;
       this.password = this.data[this.indexToEdit].password;
+      this.name = this.data[this.indexToEdit].name;
       this.alert = true;
       this.editMode = true;
     },
@@ -312,14 +325,13 @@ export default {
       const query = new Parse.Query(users);
       const results = await query.find();
       for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        console.log(object.id + ' - ' + object.get('nombre'));
-        let name = object.get('nombre');
-        let email = object.get('username');
-        let password = object.get('password');
-        let registro = object.get('updatedAt');
-        let jugueteria = object.get('empresa');
-        let identificador = object.id;
+        const usuarioJuguete = results[i];
+        let name = usuarioJuguete.get('nombre');
+        let email = usuarioJuguete.get('username');
+        let password = '*****************';
+        let registro = usuarioJuguete.attributes.createdAt.toLocaleDateString();
+        let jugueteria = usuarioJuguete.get('empresa');
+        let identificador = usuarioJuguete.id;
         let ob = { name, identificador, email, password, registro, jugueteria };
         this.data.push(ob);
       }

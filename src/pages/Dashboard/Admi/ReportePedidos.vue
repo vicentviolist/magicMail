@@ -42,12 +42,25 @@
           </template>
         </q-input>
       </div>
-      <div class="full-width flex flex-center q-my-lg"></div>
+      <div class="full-width flex flex-center"></div>
+      <div class="flex full-width flex flex-center justify-end q-mb-sm">
+        <q-btn
+          :loading="loading"
+          rounded
+          @click="exportTable"
+          type="submit"
+          class="q-ml-lg"
+          color="primary"
+          no-caps
+          label="Descargar"
+        />
+      </div>
       <div class="full-width flex flex-center">
         <q-table
           style="height: 300px; width:55%;"
           :data="data"
           :columns="columns"
+          :loading="loading"
           row-key="id"
           :filter="filter"
           virtual-scroll
@@ -62,6 +75,16 @@
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
 import Parse from 'parse';
+import { exportFile } from 'quasar';
+
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
+
+  formatted = formatted === void 0 || formatted === null ? '' : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  return `"${formatted}"`;
+}
 
 export default {
   name: 'main-page',
@@ -134,50 +157,47 @@ export default {
     back() {
       this.$router.push({ name: 'admi' }).catch(e => console.log(e));
     },
+    exportTable() {
+      const content = [this.columns.map(col => wrapCsvValue(col.label))]
+        .concat(
+          this.data.map(row =>
+            this.columns
+              .map(col =>
+                wrapCsvValue(
+                  typeof col.field === 'function'
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format,
+                ),
+              )
+              .join(','),
+          ),
+        )
+        .join('\r\n');
+      const status = exportFile('Reporte-de-Peidos.csv', content, 'text/csv');
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning',
+        });
+      }
+    },
     async table() {
-      /* let user = Parse.User.current();
-      let tienda = user.get('tiendaPointer');
-      let query2 = new Parse.Query('TiendaWithJuguetes');
-      query2.equalTo('tiendaPointer', tienda);
-      query2.include('juguetePointer');
-      const igual = await query2.find();
-      for (let i = 0; i < igual.length; i++) {
-        const object = igual[i];
-        const juguete = igual[i].get('juguetePointer');
-        let producto = juguete.get('nombre');
-        let image = juguete.get('icon').url();
-        let identificador = object.id;
-        let precio = igual[i].get('unitaryPrice');
-        let marca = juguete.get('marca');
-        let disponibilidad = igual[i].get('stock');
-        let ob = { producto, image, identificador, precio, disponibilidad, marca };
-        this.data.push(ob);
-      } */
-
-      /*  const GameScore = Parse.Object.extend("GameScore");
-const query = new Parse.Query(GameScore);
-query.equalTo("playerName", "Dan Stemkoski");
-const results = await query.find();
-alert("Successfully retrieved " + results.length + " scores.");
-// Do something with the returned Parse.Object values
-for (let i = 0; i < results.length; i++) {
-  const object = results[i];
-  alert(object.id + ' - ' + object.get('playerName'));
-} */
-
       this.loading = true;
-      const compras = Parse.Object.extend('Compras');
-      const query = new Parse.Query(compras);
-      const results = await query.find();
+      let compras = Parse.Object.extend('Compras');
+      let query = new Parse.Query(compras);
+      let results = await query.find();
 
       for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        let identificador = object.id;
-        let jugueteria = object.get('empresa');
-        let costo = object.get('total');
-        let registro = object.get('umpdateAt');
+        let pedido = results[i];
+
+        let jugueteria = pedido.get('empresa');
+        let costo = pedido.get('total');
+        let registro = pedido.attributes.createdAt.toLocaleDateString();
 
         let usuarioPoint = results[i].get('userPointer');
+        let identificador = usuarioPoint.id;
         let user = usuarioPoint.get('username');
         let ob = { identificador, costo, registro, user };
         this.data.push(ob);
