@@ -119,13 +119,6 @@
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
-              v-if="editMode"
-              @click="borrar"
-              rounded
-              label="Eliminar"
-              color="dark"
-            />
-            <q-btn
               v-if="!editMode"
               rounded
               label="Crear"
@@ -216,14 +209,14 @@ export default {
           field: 'password',
           align: 'center',
         },
-        {
+        /* {
           name: 'ultimoPedido',
           label: 'Último Pedido',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
           field: 'ultimoPedido',
           align: 'center',
-        },
+        }, */
       ],
       data: [],
     };
@@ -267,16 +260,6 @@ export default {
       this.editMode = false;
     },
     async openModal(id) {
-      //--> se tiene qu llamar el action que consulte por id
-      /* this.indexToEdit = this.data.findIndex(user => user.identificador == id);
-      //<-- aqui termina la consulta al back
-      this.identificador = this.data[this.indexToEdit].identificador;
-      this.name = this.data[this.indexToEdit].name;
-      this.email = this.data[this.indexToEdit].email;
-      this.password = this.data[this.indexToEdit].password;
-      this.alert = true;
-      this.editMode = true;
-      console.log(user); */
       const users = Parse.Object.extend('_User');
       const query = new Parse.Query(users);
       const results = await query.find();
@@ -356,20 +339,11 @@ export default {
         },
       );
     },
-    async borrar() {
-      let users = Parse.Object.extend('_User');
-      let query = new Parse.Query(users);
-      let results = await query.find();
-      let obj = results.find(elemento => elemento.id == this.identificador);
-      console.log(obj.id);
-      Parse.Cloud.run('deleteUserWithId', { userId: obj.id }).then(function(
-        ratings,
-      ) {});
-    },
     async tabla() {
       this.loading = true;
       let users = Parse.User.extend('_User');
       let query = new Parse.Query(users);
+      query.equalTo('Type', 'cliente');
       let results = await query.find();
       for (let i = 0; i < results.length; i++) {
         let usuario = results[i];

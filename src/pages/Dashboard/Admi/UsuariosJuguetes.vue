@@ -127,13 +127,6 @@
 
           <q-card-actions align="right" class="q-mb-xl">
             <q-btn
-              v-if="editMode"
-              @click="borrar"
-              rounded
-              label="Eliminar"
-              color="dark"
-            />
-            <q-btn
               v-if="!editMode"
               rounded
               label="Crear"
@@ -261,16 +254,6 @@ export default {
       this.alert = true;
       this.editMode = true;
     },
-    async borrar() {
-      let users = Parse.Object.extend('_User');
-      let query = new Parse.Query(users);
-      let results = await query.find();
-      let obj = results.find(elemento => elemento.id == this.identificador);
-      console.log(obj.id);
-      Parse.Cloud.run('deleteUserWithId', { userId: obj.id }).then(function(
-        ratings,
-      ) {});
-    },
     editar() {
       this.alert = false;
       let identificador = this.identificador;
@@ -336,6 +319,7 @@ export default {
       this.loading = true;
       const users = Parse.Object.extend('_User');
       const query = new Parse.Query(users);
+      query.equalTo('Type', 'proveedor');
       const results = await query.find();
       for (let i = 0; i < results.length; i++) {
         const usuarioJuguete = results[i];
