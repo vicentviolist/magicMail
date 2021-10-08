@@ -98,6 +98,7 @@
                 filled
                 required
                 class="q-mb-lg"
+                type="number"
                 v-model="disponibilidad"
                 label="DISPONIBILIDAD"
               >
@@ -220,7 +221,6 @@ export default {
           align: 'center',
         },
       ],
-      //.include("")
       data: [],
     };
   },
@@ -242,17 +242,6 @@ export default {
       this.editMode = false;
     },
     async openModal(id) {
-      /*  //--> se tiene qu llamar el action que consulte por id
-      this.indexToEdit = this.data.findIndex(toy => toy.identificador == id);
-      //<-- aqui termina la consulta al back
-      this.identificador = this.data[this.indexToEdit].identificador;
-      this.producto = this.data[this.indexToEdit].producto;
-      this.precio = this.data[this.indexToEdit].precio;
-      this.marca = this.data[this.indexToEdit].marca;
-      this.disponibilidad = this.data[this.indexToEdit].disponibilidad;
-      this.image = this.data[this.indexToEdit].image;
-      this.alert = true;
-      this.editMode = true; */
       this.indexToEdit = this.data.findIndex(user => user.identificador == id);
       //<-- aqui termina la consulta al back
       this.identificador = this.data[this.indexToEdit].identificador;
@@ -264,99 +253,63 @@ export default {
       this.alert = true;
       this.editMode = true;
     },
-    anadir() {
-      this.alert = false;
-      let identificador = this.identificador;
-      let producto = this.producto;
-      let precio = this.precio;
-      let marca = this.marca;
-      let disponibilidad = this.disponibilidad;
-      let image = this.image;
-      let ob = {
-        identificador,
-        producto,
-        precio,
-        marca,
-        disponibilidad,
-      };
-      if (this.editMode) {
-        // llamar a la api de PUT por id
-        let toysEdited = this.data.map((toy, index) => {
-          if (index == this.indexToEdit) {
-            toy.identificador = this.identificador;
-            toy.producto = this.producto;
-            toy.precio = this.precio;
-            toy.marca = this.marca;
-            toy.disponibilidad = this.disponibilidad;
-          }
-          return toy.save();
-        });
-        console.log(toysEdited);
-        this.data = toysEdited;
-      } else {
-        // llamar a la api de POST
-        this.data.push(ob);
-      }
-      // limpiar datos del formulario
-      this.identificador = null;
-      this.producto = null;
-      this.precio = null;
-      this.marca = null;
-      this.disponibilidad = null;
-      this.image = null;
-      this.editMode = false;
+    nuevoJuguete() {
+      let user = Parse.User.current();
+      let tienda = user.get('tiendaPointer');
+      let Child = Parse.Object.extend('Juguetes');
+      let child = new Child();
+      let file = new Parse.File('icon.jpg', this.image);
+      child
+        .save({
+          nombre: this.producto,
+          marca: this.marca,
+          icon: file,
+        })
+        .then(
+          child => {
+            console.log(child);
+          },
+          error => {
+            console.log(error);
+          },
+        );
+      let Parent = Parse.Object.extend('TiendaWithJuguetes');
+      let parent = new Parent();
+      parent
+        .save({
+          juguetePointer: child,
+          tiendaPointer: tienda,
+          unitaryPrice: parseFloat(this.precio),
+          stock: parseFloat(this.disponibilidad),
+        })
+        .then(
+          parent => {
+            console.log(parent);
+          },
+          error => {
+            console.log(error);
+          },
+        );
+      this.closeModal();
     },
-    async nuevoJuguete() {
-      /* let user = Parse.User.current();
+    async borrar() {
+      let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
       let query2 = new Parse.Query('TiendaWithJuguetes');
       query2.equalTo('tiendaPointer', tienda);
-      const igual = await query2.find(); */
+      query2.include('juguetePointer');
+      let igual = await query2.find();
+      let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
 
-      const Juguete = Parse.Object.extend('Juguetes');
-      const Juguete2 = Parse.Object.extend('TiendaWithJuguetes');
-      const juguete = new Juguete();
-      const juguete2 = new Juguete();
-      const file = new Parse.File('icon.jpg', this.image);
-
-      juguete.set('nombre', this.producto);
-      juguete.set('marca', this.marca);
-      juguete.set('icon', file);
-
-      juguete.save().then(
-        juguete => {
-          // Execute any logic that should take place after the object is saved.
-          alert('New object created with objectId: ' + juguete.id);
-        },
-        error => {
-          alert('Failed to create new object, with error code: ' + error.message);
-        },
-      );
-      juguete2.save().then(
-        juguete => {
-          // Execute any logic that should take place after the object is saved.
-          alert('New object created with objectId: ' + juguete.id);
-        },
-        error => {
-          alert('Failed to create new object, with error code: ' + error.message);
-        },
-      );
-      console.log(igual);
-    },
-    async borrar() {
-      const users = Parse.Object.extend('_User');
-      const query = new Parse.Query(users);
-      const results = await query.find();
-      let obj = results.find(elemento => elemento.id == this.identificador);
-      console.log(obj);
-      /* obj.destroy().then(
-        obj => {
-          this.showMsg('ok', obj);
+      jugueteObj.destroy().then(
+        jugueteObj => {
+          this.showMsg('ok', 'Objeto eliminado', jugueteObj);
         },
         error => {
           this.showMsg('error', error);
         },
-      ); */
+      );
+      this.closeModal();
     },
     async editar() {
       let user = Parse.User.current();
@@ -364,35 +317,34 @@ export default {
       let query2 = new Parse.Query('TiendaWithJuguetes');
       query2.equalTo('tiendaPointer', tienda);
       query2.include('juguetePointer');
-      const igual = await query2.find();
+      let igual = await query2.find();
       let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
-
-      jugueteObj.save().then(jugueteObj => {
-        jugueteObj.set('nombre', this.producto);
-        console.log(jugueteObj);
-        return jugueteObj.save();
-      });
+      let jugueteObjName = jugueteObj.attributes;
+      console.log(jugueteObjName);
+      jugueteObj
+        .save()
+        .then(jugueteObj => {
+          jugueteObj.set('unitaryPrice', parseFloat(this.precio));
+          jugueteObj.set('stock', parseFloat(this.disponibilidad));
+          this.showMsg('ok', 'Objeto editado', jugueteObj);
+          return jugueteObj.save();
+        })
+        .catch(err => {
+          this.showMsg('error', err);
+        });
+      this.closeModal();
     },
     async tabla() {
       this.loading = true;
-      //Se utiliza filtrado query.equalTo('empresa', 'Matel'); para imprimir a los usuarios que sean empresa Matel
-      /* let query = new Parse.Query('_User');
-      query.equalTo('empresa', 'Matel');
-      const results = await query.find();
-      for (let i = 0; i < results.length; i++) {
-        const object = results[i];
-        console.log(object.id + ' - ' + object.get('nombre'));
-      } */
-      // .current(); indica el usuario logiado
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
       let query2 = new Parse.Query('TiendaWithJuguetes');
       query2.equalTo('tiendaPointer', tienda);
       query2.include('juguetePointer');
-      const igual = await query2.find();
+      let igual = await query2.find();
       for (let i = 0; i < igual.length; i++) {
-        const object = igual[i];
-        const juguete = igual[i].get('juguetePointer');
+        let object = igual[i];
+        let juguete = igual[i].get('juguetePointer');
         let producto = juguete.get('nombre');
         let image = juguete.get('icon').url();
         let identificador = object.id;

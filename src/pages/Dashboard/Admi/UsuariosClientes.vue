@@ -375,6 +375,10 @@ export default {
         let usuario = results[i];
         let name = usuario.get('nombre');
         let email = usuario.get('username');
+        const role = new Parse.Role('administrador', roleACL);
+        role.getUsers().add(usersToAddToRole);
+        role.getRoles().add(rolesToAddToRole);
+        role.save();
         let password = '*****************';
         let registro = usuario.attributes.createdAt.toLocaleDateString();
         let identificador = usuario.id;
