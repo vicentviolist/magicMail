@@ -167,7 +167,7 @@ export default {
           email2: email2,
           direccion: dirección,
           telefono: telefono,
-          Type: 'vendedor',
+          Type: 'proveedor',
           rfc: rfc,
           cuentaBancaria: cuentaBancaria,
         })
