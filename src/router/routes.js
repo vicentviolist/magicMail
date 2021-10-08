@@ -29,6 +29,12 @@ const routes = [
           import(/* webpackChunkName: "login" */ 'pages/VentasRegistro.vue'),
       },
       {
+        path: 'registro-tienda',
+        name: 'registroTienda',
+        component: () =>
+          import(/* webpackChunkName: "login" */ 'pages/TiendaRegistro.vue'),
+      },
+      {
         path: 'admin',
         name: 'loginAdmin',
         component: () =>

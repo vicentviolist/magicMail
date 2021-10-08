@@ -106,9 +106,12 @@ export default {
         user
           .signUp()
           .then(ok => {
-            this.showMsg('ok', 'Bienvenido registrado con exito');
+            this.showMsg(
+              'ok',
+              'Bienvenido registrado con exito, solo falta que registrees tu empresa',
+            );
             this.$router
-              .push({ name: 'vendedor' })
+              .push({ name: 'registroTienda' })
               .catch(e => this.showMsg('error', e));
           })
           .catch(err => {

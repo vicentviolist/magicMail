@@ -290,7 +290,7 @@ export default {
             console.log(error);
           },
         );
-      this.closeModal();
+      this.alert = false;
     },
     async borrar() {
       let user = Parse.User.current();
@@ -309,7 +309,7 @@ export default {
           this.showMsg('error', error);
         },
       );
-      this.closeModal();
+      this.alert = false;
     },
     async editar() {
       let user = Parse.User.current();
@@ -319,8 +319,8 @@ export default {
       query2.include('juguetePointer');
       let igual = await query2.find();
       let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
-      let jugueteObjName = jugueteObj.attributes;
-      console.log(jugueteObjName);
+      /* let jugueteObjName = jugueteObj.attributes;
+      console.log(jugueteObjName); */
       jugueteObj
         .save()
         .then(jugueteObj => {
@@ -332,7 +332,7 @@ export default {
         .catch(err => {
           this.showMsg('error', err);
         });
-      this.closeModal();
+      this.alert = false;
     },
     async tabla() {
       this.loading = true;
