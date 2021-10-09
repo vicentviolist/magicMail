@@ -24,7 +24,8 @@
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
+        En este Modulo podras ver todos los pedidos realizados a todas las
+        jugueterias.
       </div>
     </template>
     <template v-slot:table>
@@ -137,15 +138,16 @@ export default {
           field: 'costo',
           format: val => `$${val}`,
           align: 'center',
-        } /* 
+        },
         {
-          name: 'status',
-          label: 'Status',
+          name: 'idConekta',
+          label: 'idConekta',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          field: 'status',
+          field: 'idConekta',
           align: 'center',
-        }, */,
+        },
+        ,
       ],
       data: [],
     };
@@ -197,12 +199,12 @@ export default {
         let jugueteria = 'ninonmk';
         let costo = pedido.get('total');
         let registro = pedido.attributes.createdAt.toLocaleDateString();
-
         let usuarioPoint = results[i].get('userPointer');
         let identificador = results[i].id;
-        console.log(results[i].attributes.userPointer.attributes.id);
         let user = usuarioPoint.get('username');
-        let ob = { identificador, jugueteria, costo, registro, user };
+        let idConekta = usuarioPoint.get('idConekta');
+        console.log(idConekta);
+        let ob = { identificador, jugueteria, costo, registro, user, idConekta };
         this.data.push(ob);
       }
       this.loading = false;

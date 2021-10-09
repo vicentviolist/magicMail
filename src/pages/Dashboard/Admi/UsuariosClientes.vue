@@ -97,23 +97,6 @@
                 label="CORREO ELECTRONICO"
               >
               </m-input>
-              <m-input
-                filled
-                class="q-mb-lg"
-                v-if="!editMode"
-                v-model="password"
-                :type="isPwd ? 'password' : 'text'"
-                hint="Password with toggle"
-                label="PASSWORD"
-              >
-                <template v-slot:append>
-                  <q-icon
-                    :name="isPwd ? 'visibility_off' : 'visibility'"
-                    class="cursor-pointer"
-                    @click="isPwd = !isPwd"
-                  />
-                </template>
-              </m-input>
             </div>
           </q-card-section>
 
@@ -132,7 +115,7 @@
               label="Editar"
               class="q-mr-xl"
               color="primary"
-              @click="nuevoUsuarui"
+              @click="editar"
             />
           </q-card-actions>
         </q-card>
@@ -277,9 +260,6 @@ export default {
       }
       this.editMode = true;
     },
-    counterLabelFn({ totalSize, filesNumber, maxFiles }) {
-      return `${filesNumber} files of ${maxFiles} | ${totalSize}`;
-    },
     addUser() {
       this.alert = false;
       let name = this.name;
@@ -338,6 +318,30 @@ export default {
           alert('Failed to create new object, with error code: ' + error.message);
         },
       );
+    },
+    async editar() {
+      let users = Parse.User.extend('_User');
+      let query = new Parse.Query(users);
+      query.equalTo('Type', 'cliente');
+      let results = await query.find();
+      let userOnj = results.find(users => users.id == this.identificador);
+      let username = this.name;
+      let email = this.email;
+      userOnj
+        .save({
+          nombre: username,
+          username: email,
+        })
+        .then(
+          userOnj => {
+            this.showMsg('ok', 'Editado');
+          },
+          error => {
+            this.showMsg('ok', error);
+          },
+        );
+      console.log(username);
+      this.alert = false;
     },
     async tabla() {
       this.loading = true;

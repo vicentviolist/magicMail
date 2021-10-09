@@ -140,7 +140,7 @@
               label="Editar"
               class="q-mr-xl"
               color="primary"
-              @click="nuevoUsuarui"
+              @click="editar"
             />
           </q-card-actions>
         </q-card>
@@ -254,44 +254,31 @@ export default {
       this.alert = true;
       this.editMode = true;
     },
-    editar() {
-      this.alert = false;
-      let identificador = this.identificador;
+    async editar() {
+      let users = Parse.User.extend('_User');
+      let query = new Parse.Query(users);
+      query.equalTo('Type', 'proveedor');
+      let results = await query.find();
+      let userOnj = results.find(users => users.id == this.identificador);
+      let username = this.name;
+      let empresa = this.jugueteria;
       let email = this.email;
-      let jugueteria = this.jugueteria;
-      let password = this.password;
-      var hoy = new Date();
-      let registro =
-        hoy.getDate() + '/' + (hoy.getMonth() + 1) + '/' + hoy.getFullYear();
-      let ob = {
-        identificador,
-        jugueteria,
-        email,
-        password,
-        registro,
-      };
-      if (this.editMode) {
-        // llamar a la api de PUT por id
-        let userId = this.data.map((user, index) => {
-          if (index == this.indexToEdit) {
-            user.identificador = this.identificador;
-            user.jugueteria = this.jugueteria;
-            user.email = this.email;
-            user.password = this.password;
-          }
-          return user;
-        });
-        this.data = userId;
-      } else {
-        // llamar a la api de POST
-        this.data.push(ob);
-      }
-      // limpiar datos del formulario
-      this.identificador = null;
-      this.email = null;
-      this.password = null;
-      this.editMode = false;
-      this.jugueteria = false;
+      userOnj
+        .save({
+          nombre: username,
+          username: email,
+          empresa: empresa,
+        })
+        .then(
+          userOnj => {
+            this.showMsg('ok', 'Editado');
+          },
+          error => {
+            this.showMsg('ok', error);
+          },
+        );
+      console.log(username);
+      this.alert = false;
     },
     async nuevoUsuarui() {
       const Usuario = Parse.Object.extend('_User');

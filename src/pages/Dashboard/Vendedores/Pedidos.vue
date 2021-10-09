@@ -232,6 +232,14 @@ export default {
           align: 'center',
           format: val => `$${val}`,
         },
+        {
+          name: 'idConekta',
+          label: 'idConekta',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'idConekta',
+          align: 'center',
+        },
       ],
       data: [],
       dataCollection: [
@@ -352,9 +360,10 @@ export default {
         let registro = pedido.attributes.createdAt.toLocaleDateString();
 
         let usuarioPoint = results[i].get('userPointer');
+        let idConekta = usuarioPoint.get('idConekta');
         let identificador = results[i].id;
         let user = usuarioPoint.get('username');
-        let ob = { identificador, costo, registro, user, jugueteria };
+        let ob = { identificador, costo, registro, user, jugueteria, idConekta };
         this.data.push(ob);
       }
       this.loading = false;
