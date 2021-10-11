@@ -42,7 +42,7 @@
         <q-input
           rounded
           outlined
-          style="width:55%"
+          style="width:70%"
           debounce="300"
           v-model="filter"
           placeholder="Buscar Cliente"
@@ -54,7 +54,7 @@
       </div>
       <div class="full-width flex flex-center">
         <q-table
-          style="height: 300px; width:55%;"
+          style="height: 300px; width:90%;"
           :data="data"
           :loading="loading"
           :columns="columns"
@@ -63,14 +63,14 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
-          <template v-slot:body-cell-jugueteria="props">
+          <template v-slot:body-cell-rfcButton="props">
             <q-td :props="props">
-              <div
-                class="cursor-pointer flex flex-center"
-                @click="openModal(props.row.identificador)"
-              >
-                {{ props.row.jugueteria }}
-              </div>
+              <q-btn rounded label="Descargar" color="primary" />
+            </q-td>
+          </template>
+          <template v-slot:body-cell-cuentaButton="props">
+            <q-td :props="props">
+              <q-btn rounded label="Descargar" color="primary" />
             </q-td>
           </template>
         </q-table>
@@ -152,6 +152,7 @@
 <script>
 import MainTempl from 'src/pages/MainTempl.vue';
 import Parse from 'parse';
+import FileSaver from 'file-saver';
 
 export default {
   name: 'main-page',
@@ -164,6 +165,7 @@ export default {
       isPwd: false,
       jugueteria: null,
       identificador: null,
+      archivo: null,
       name: null,
       document: null,
       file0ne: null,
@@ -216,11 +218,43 @@ export default {
           align: 'center',
         },
         {
-          name: 'ultimoPedido',
-          label: 'Último Pedido',
+          name: 'telefono',
+          label: 'Numero de telefono',
           headerStyle: 'color: #6D7F9F',
           style: 'background: #F8F8F8;',
-          field: 'ultimoPedido',
+          field: 'telefono',
+          align: 'center',
+        },
+        {
+          name: 'direccion',
+          label: 'Dirección',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'direccion',
+          align: 'center',
+        },
+        {
+          name: 'email2',
+          label: 'Email sacundario',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'email2',
+          align: 'center',
+        },
+        {
+          name: 'rfc',
+          label: 'RFC',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'rfc',
+          align: 'center',
+        },
+        {
+          name: 'cuentaBancaria',
+          label: 'Cuenta Bancaria',
+          headerStyle: 'color: #6D7F9F',
+          style: 'background: #F8F8F8;',
+          field: 'cuentaBancaria',
           align: 'center',
         },
       ],
@@ -280,6 +314,21 @@ export default {
       console.log(username);
       this.alert = false;
     },
+    download() {
+      axios({
+        url: this.archivo,
+        method: 'GET',
+        responseType: 'blob',
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'cliente.pdf');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    },
     async nuevoUsuarui() {
       const Usuario = Parse.Object.extend('_User');
       const usuario = new Usuario();
@@ -290,6 +339,7 @@ export default {
       usuario.set('password', this.password);
       usuario.set('email', this.email);
       usuario.set('empresa', this.jugueteria);
+      usuario.set('Type', 'proveedor');
 
       usuario.save().then(
         usuario => {
@@ -315,8 +365,26 @@ export default {
         let password = '*****************';
         let registro = usuarioJuguete.attributes.createdAt.toLocaleDateString();
         let jugueteria = usuarioJuguete.get('empresa');
+        let telefono = usuarioJuguete.get('telefono');
+        let direccion = usuarioJuguete.get('direccion');
+        let email2 = usuarioJuguete.get('email2');
+        let rfc = usuarioJuguete.get('rfc').url();
+        let cuentaBancaria = usuarioJuguete.get('cuentaBancaria').url();
+        console.log(cuentaBancaria);
         let identificador = usuarioJuguete.id;
-        let ob = { name, identificador, email, password, registro, jugueteria };
+        let ob = {
+          name,
+          identificador,
+          email,
+          password,
+          registro,
+          jugueteria,
+          telefono,
+          cuentaBancaria,
+          rfc,
+          direccion,
+          email2,
+        };
         this.data.push(ob);
       }
       this.loading = false;

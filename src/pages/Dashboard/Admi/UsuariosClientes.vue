@@ -97,6 +97,8 @@
                 label="CORREO ELECTRONICO"
               >
               </m-input>
+              <m-input filled class="q-mb-lg" v-model="password" label="PASSWORD">
+              </m-input>
             </div>
           </q-card-section>
 
@@ -307,6 +309,8 @@ export default {
       usuario.set('username', this.email);
       usuario.set('nombre', this.name);
       usuario.set('password', this.password);
+      usuario.set('Type', 'cliente');
+
       usuario.set('email', this.email);
 
       usuario.save().then(
