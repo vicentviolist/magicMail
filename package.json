@@ -2,7 +2,7 @@
   "name": "clean-template",
   "version": "0.0.1",
   "description": "Proyecto base usando la arquitectura Clean Code",
-  "productName": "Clean Template",
+  "productName": "Magic Mail",
   "author": "lennux23 <alexochihua@hotmail.com>",
   "private": true,
   "scripts": {

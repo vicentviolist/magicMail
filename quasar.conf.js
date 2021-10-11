@@ -105,8 +105,8 @@ module.exports = function(/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'Clean Template',
-        short_name: 'Clean Template',
+        name: 'Magic Mail',
+        short_name: 'Magic Mail',
         description: 'Proyecto base usando la arquitectura Clean Code',
         display: 'standalone',
         orientation: 'portrait',

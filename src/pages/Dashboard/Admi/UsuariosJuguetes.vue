@@ -63,9 +63,14 @@
           virtual-scroll
           :rows-per-page-options="[0]"
         >
-          <template v-slot:body-cell-rfcButton="props">
+          <template v-slot:body-cell-jugueteria="props">
             <q-td :props="props">
-              <q-btn rounded label="Descargar" color="primary" />
+              <div
+                class="cursor-pointer flex flex-center"
+                @click="openModal(props.row.identificador)"
+              >
+                {{ props.row.jugueteria }}
+              </div>
             </q-td>
           </template>
           <template v-slot:body-cell-cuentaButton="props">
@@ -96,7 +101,13 @@
             <div class="" style="width:70%">
               <m-input filled class="q-mb-lg" v-model="name" label="NOMBRE">
               </m-input>
-              <m-input filled class="q-mb-lg" v-model="jugueteria" label="EMPRESA">
+              <m-input
+                filled
+                class="q-mb-lg"
+                :disable="editMode"
+                v-model="jugueteria"
+                label="EMPRESA"
+              >
               </m-input>
               <m-input
                 filled

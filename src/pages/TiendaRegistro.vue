@@ -66,6 +66,7 @@
               <m-input
                 filled
                 class="q-mb-lg"
+                required
                 v-model="email2"
                 label="CORREO ELECTRONICO SECUNDARIO"
               >
@@ -74,6 +75,7 @@
               </m-input>
               <m-input
                 filled
+                required
                 class="q-mb-lg"
                 type="number"
                 v-model="telefono"
@@ -84,6 +86,7 @@
               <q-file
                 borderless
                 v-model="datosBancarios"
+                required
                 accept=".pdf"
                 label="Elije tus Datos bancarios"
               />

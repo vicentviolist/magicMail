@@ -80,6 +80,7 @@
                 required
                 class="q-mb-lg"
                 v-model="producto"
+                :disable="editMode"
                 label="Producto"
               >
               </m-input>
@@ -92,7 +93,14 @@
                 label="PRECIO"
               >
               </m-input>
-              <m-input filled required class="q-mb-lg" v-model="marca" label="MARCA">
+              <m-input
+                filled
+                required
+                :disable="editMode"
+                class="q-mb-lg"
+                v-model="marca"
+                label="MARCA"
+              >
               </m-input>
               <m-input
                 filled
@@ -300,7 +308,7 @@ export default {
       query2.include('juguetePointer');
       let igual = await query2.find();
       let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
-
+      console.log(igual);
       jugueteObj.destroy().then(
         jugueteObj => {
           this.showMsg('ok', 'Objeto eliminado', jugueteObj);
