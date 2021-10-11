@@ -110,9 +110,7 @@ export default {
               'ok',
               'Bienvenido registrado con exito, solo falta que registrees tu empresa',
             );
-            this.$router
-              .push({ name: 'registroTienda' })
-              .catch(e => this.showMsg('error', e));
+            this.$router.push({ name: 'registroTienda' });
           })
           .catch(err => {
             this.showMsg('error', err);

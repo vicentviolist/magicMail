@@ -293,6 +293,7 @@ export default {
         .then(
           parent => {
             console.log(parent);
+            this.showMsg('ok', 'Objeto creado');
           },
           error => {
             console.log(error);
@@ -311,7 +312,7 @@ export default {
       console.log(igual);
       jugueteObj.destroy().then(
         jugueteObj => {
-          this.showMsg('ok', 'Objeto eliminado', jugueteObj);
+          this.showMsg('ok', 'Objeto eliminado');
         },
         error => {
           this.showMsg('error', error);

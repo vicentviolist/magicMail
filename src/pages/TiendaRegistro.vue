@@ -144,7 +144,7 @@ export default {
         .then(
           child => {
             this.$router.push({ name: 'vendedor' });
-            this.showMsg('ok', 'Bienvenido');
+            this.showMsg('ok', 'Bienvenido Tienda registrada');
           },
           error => {
             console.log(error);
