@@ -25,7 +25,7 @@
     </template>
     <template v-slot:desc>
       <div class="q-mb-lg" style="width:35%">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos sapiente autem.
+        Aquí podras ver todos los pedidos que se han hecho a tu tiebda.
       </div>
       <!-- <div class="q-mb-lg flex flex-center row">
         <div class="q-mr-lg">
