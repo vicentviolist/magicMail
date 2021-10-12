@@ -104,7 +104,7 @@
             type="submit"
             icon="signal_cellular_alt"
             @click="graphSection"
-            class=""
+            class="hidden"
             no-caps
             label="Grafica"
           />
