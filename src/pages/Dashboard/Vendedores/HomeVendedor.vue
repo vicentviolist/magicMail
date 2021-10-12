@@ -1,6 +1,14 @@
 <template>
   <HomeAllTmpl>
-    <template v-slot:title> </template>
+    <template v-slot:title>
+      <div class="text-h3 m-tex-m">
+        Bienvenido
+      </div>
+      <p class="q-mb-xl">
+        Vendedor aquí podras manejar tu lista de juguetes así como ver el detalle de
+        tus pedidos.
+      </p></template
+    >
     <template v-slot:card>
       <div class="flex flex-center row">
         <div @click="userC">
