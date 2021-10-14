@@ -1,6 +1,6 @@
 const routes = [
   {
-    path: '/',
+    path: 'magicmail.brounieapps.com/magicmail/',
     component: () =>
       import(/* webpackChunkName: "login" */ 'layouts/MainLayout.vue'),
     children: [
@@ -49,7 +49,7 @@ const routes = [
     ],
   },
   {
-    path: '/administrador',
+    path: 'magicmail.brounieapps.com/magicmail/administrador',
     component: () =>
       import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayout.vue'),
     children: [
@@ -112,7 +112,7 @@ const routes = [
     },
   },
   {
-    path: '/vendedor',
+    path: 'magicmail.brounieapps.com/magicmail/vendedor',
     component: () =>
       import(/* webpackChunkName: "dashboard" */ 'layouts/DashboardLayout.vue'),
     children: [
