@@ -56,6 +56,9 @@
       <div class="q-mx-auto text-center text-weight-light q-mb-lg text-caption">
         ¿Aun no tiene cuenta? <br />
         <div @click="registro" style="cursor: pointer;">Registrate</div>
+        <q-btn class="text-weight-light text-caption" flat round @click="admin"
+          >admin</q-btn
+        >
       </div>
     </template>
   </main-page-tpl>
@@ -95,6 +98,9 @@ export default {
     },
     registro() {
       this.$router.push({ name: 'registroventas' });
+    },
+    admin() {
+      this.$router.push({ name: 'loginAdmin' });
     },
   },
 };
