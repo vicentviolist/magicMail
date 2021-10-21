@@ -1,7 +1,7 @@
 <template>
   <main-page-tpl>
     <template v-slot:logo></template>
-    <template v-slot:panel>Reistrate</template>
+    <template v-slot:panel>Registrate</template>
     <template v-slot:form>
       <q-form @submit="handleAuth">
         <m-input filled class="q-mt-md" type="email" v-model="email" label="correo">
