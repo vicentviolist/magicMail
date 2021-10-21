@@ -11,7 +11,7 @@
         <div class="text-center q-pb-md q-pb-xl-xl">
           <slot name="title"> </slot>
         </div>
-        <div style="width:60%;" class="q-mx-auto">
+        <div style="width:80%;" class="q-mx-auto">
           <slot name="form"> </slot>
         </div>
         <div style="width:60%;" class="q-mx-auto">
@@ -28,7 +28,7 @@
 .e-card-login {
   min-width: 330px;
   width: 25%;
-  min-height: 336px;
+  min-height: 400px;
   height: 75vh;
   border-radius: 30px;
 }
@@ -49,5 +49,10 @@
 .img-title {
   height: 11vh;
   width: 250px;
+}
+@media screen and (max-device-width: 640px), screen and (max-width: 1024px) {
+  .e-card-login {
+    height: 90vh;
+  }
 }
 </style>
