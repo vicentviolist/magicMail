@@ -28,8 +28,7 @@
 .e-card-login {
   min-width: 330px;
   width: 25%;
-  min-height: 400px;
-  height: 75vh;
+  min-height: 600px;
   border-radius: 30px;
 }
 .space-pan-text {
@@ -49,10 +48,5 @@
 .img-title {
   height: 11vh;
   width: 250px;
-}
-@media screen and (max-device-width: 640px), screen and (max-width: 1024px) {
-  .e-card-login {
-    height: 90vh;
-  }
 }
 </style>

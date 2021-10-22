@@ -64,7 +64,11 @@
       </q-form>
     </template>
     <template v-slot:pass>
-      <div class="q-mt-sm" @click="iniciarSesion" style="cursor: pointer;">
+      <div
+        class="q-mt-sm flex flex-center"
+        @click="iniciarSesion"
+        style="cursor: pointer;"
+      >
         Inicia sesión
       </div></template
     >

@@ -189,7 +189,7 @@ export default {
       user
         .save({
           email: email,
-          username: username,
+          nombre: username,
         })
         .then(
           user => {
@@ -203,8 +203,7 @@ export default {
     },
     pruebas() {
       let user = Parse.User.current();
-      let name = user.get('username');
-      let nombre = user.get('nombre');
+      let name = user.get('nombre');
       let email = user.get('email');
       if (user) {
         this.email = email;
