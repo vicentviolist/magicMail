@@ -348,9 +348,9 @@ export default {
       let tiendaId = user.get('tiendaPointer');
       let compras = Parse.Object.extend('Compras');
       let query = new Parse.Query(compras);
-      query.include('tiendasRelation');
-      query.include('userPointer');
-      query.equalTo('tiendasRelation', tiendaId);
+      query.include('tiendasRelation').limit(1000);
+      query.include('userPointer').limit(1000);
+      query.equalTo('tiendasRelation', tiendaId).limit(1000);
       /* query.matchesKeyInQuery('tiendasRelation', 'objectId', tiendaId); */
       let results = await query.find();
       for (let i = 0; i < results.length; i++) {

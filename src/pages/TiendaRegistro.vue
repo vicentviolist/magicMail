@@ -176,12 +176,13 @@ export default {
         })
         .then(
           user => {
-            this.showMsg('ok', user);
+            this.showMsg('ok', 'Información enviada');
           },
           error => {
-            this.showMsg('ok', error);
+            this.showMsg('error', 'Llena todos los campos');
           },
         );
+      this.showMsg('ok', 'Información enviada');
     },
     goToRestorePass() {
       this.$router.push({ name: 'forgotPassword' });

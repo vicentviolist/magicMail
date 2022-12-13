@@ -367,7 +367,7 @@ export default {
       this.loading = true;
       const users = Parse.Object.extend('_User');
       const query = new Parse.Query(users);
-      query.equalTo('Type', 'proveedor');
+      query.equalTo('Type', 'proveedor').limit(1000);
       const results = await query.find();
       for (let i = 0; i < results.length; i++) {
         const usuarioJuguete = results[i];

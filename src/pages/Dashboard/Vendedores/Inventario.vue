@@ -261,52 +261,71 @@ export default {
       this.alert = true;
       this.editMode = true;
     },
-    nuevoJuguete() {
+    async nuevoJuguete() {
+      let query2 = new Parse.Query('Juguetes');
+      query2.equalTo('nombre', this.producto).limit(1000);
+      query2.equalTo('marca', this.marca).limit(1000);
+      let igual = await query2.first();
+
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
       let Child = Parse.Object.extend('Juguetes');
       let child = new Child();
       let file = new Parse.File('icon.jpg', this.image);
-      child
-        .save({
-          nombre: this.producto,
-          marca: this.marca,
-          icon: file,
-        })
-        .then(
-          child => {
-            console.log(child);
-          },
-          error => {
-            console.log(error);
-          },
-        );
-      let Parent = Parse.Object.extend('TiendaWithJuguetes');
-      let parent = new Parent();
-      parent
-        .save({
-          juguetePointer: child,
-          tiendaPointer: tienda,
-          unitaryPrice: parseFloat(this.precio),
-          stock: parseFloat(this.disponibilidad),
-        })
-        .then(
-          parent => {
-            console.log(parent);
-            this.showMsg('ok', 'Objeto creado');
-          },
-          error => {
-            console.log(error);
-          },
-        );
-      this.alert = false;
+
+      if (igual != null) {
+        child = igual;
+      } else {
+        child
+          .save({
+            nombre: this.producto,
+            marca: this.marca,
+            icon: file,
+          })
+          .then(
+            child => {
+              console.log(child);
+            },
+            error => {
+              console.log(error);
+            },
+          );
+      }
+      let query3 = new Parse.Query('TiendaWithJuguetes');
+      query3.equalTo('juguetePointer', igual);
+      query3.equalTo('tiendaPointer', tienda).limit(1000);
+      let res = await query3.first();
+      console.log(res);
+      if (res != null) {
+        this.showMsg('error', 'Ya hay un producto con este nombre');
+      } else {
+        let Parent = Parse.Object.extend('TiendaWithJuguetes');
+        let parent = new Parent();
+        parent
+          .save({
+            juguetePointer: child,
+            tiendaPointer: tienda,
+            unitaryPrice: parseFloat(this.precio),
+            stock: parseFloat(this.disponibilidad),
+          })
+          .then(
+            parent => {
+              console.log(parent);
+              this.showMsg('ok', 'Objeto creado');
+            },
+            error => {
+              this.showMsg('error', error);
+            },
+          );
+        this.alert = false;
+      }
     },
     async borrar() {
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
-      let query2 = new Parse.Query('TiendaWithJuguetes');
-      query2.equalTo('tiendaPointer', tienda);
-      query2.include('juguetePointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes').limit(1000);
+      query2.equalTo('tiendaPointer', tienda).limit(1000);
+      query2.include('juguetePointer').limit(1000);
       let igual = await query2.find();
       let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
       console.log(igual);
@@ -323,13 +342,11 @@ export default {
     async editar() {
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
-      let query2 = new Parse.Query('TiendaWithJuguetes');
-      query2.equalTo('tiendaPointer', tienda);
-      query2.include('juguetePointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes').limit(1000);
+      query2.equalTo('tiendaPointer', tienda).limit(1000);
+      query2.include('juguetePointer').limit(1000);
       let igual = await query2.find();
       let jugueteObj = igual.find(juguete => juguete.id == this.identificador);
-      /* let jugueteObjName = jugueteObj.attributes;
-      console.log(jugueteObjName); */
       jugueteObj
         .save()
         .then(jugueteObj => {
@@ -347,15 +364,16 @@ export default {
       this.loading = true;
       let user = Parse.User.current();
       let tienda = user.get('tiendaPointer');
-      let query2 = new Parse.Query('TiendaWithJuguetes');
-      query2.equalTo('tiendaPointer', tienda);
-      query2.include('juguetePointer');
+      let query2 = new Parse.Query('TiendaWithJuguetes').limit(1000);
+      query2.equalTo('tiendaPointer', tienda).limit(1000);
+      query2.include('juguetePointer').limit(1000);
       let igual = await query2.find();
       for (let i = 0; i < igual.length; i++) {
         let object = igual[i];
         let juguete = igual[i].get('juguetePointer');
         let producto = juguete.get('nombre');
         let image = juguete.get('icon').url();
+        console.log(igual[i]);
         let identificador = object.id;
         let precio = igual[i].get('unitaryPrice');
         let marca = juguete.get('marca');

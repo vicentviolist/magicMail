@@ -189,8 +189,8 @@ export default {
       this.loading = true;
       let compras = Parse.Object.extend('Compras');
       let query = new Parse.Query(compras);
-      query.include('tiendasRelation');
-      query.include('userPointer');
+      query.include('tiendasRelation').limit(1000);
+      query.include('userPointer').limit(1000);
       let results = await query.find();
 
       for (let i = 0; i < results.length; i++) {

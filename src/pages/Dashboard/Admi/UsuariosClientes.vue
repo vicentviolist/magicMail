@@ -351,7 +351,7 @@ export default {
       this.loading = true;
       let users = Parse.User.extend('_User');
       let query = new Parse.Query(users);
-      query.equalTo('Type', 'cliente');
+      query.equalTo('Type', 'cliente').limit(1000);
       let results = await query.find();
       for (let i = 0; i < results.length; i++) {
         let usuario = results[i];
